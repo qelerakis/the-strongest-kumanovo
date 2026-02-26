@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l src/components/**/*.tsx src/lib/**/*.ts)",
+      "Bash(npx drizzle-kit push --force)",
+      "Bash(npm run build)",
+      "Bash(npx tsx -e \":*)",
+      "Bash(node -e \":*)",
+      "Bash(npm run lint)"
+    ]
+  }
+}

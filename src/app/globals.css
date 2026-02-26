@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-brand-red: #DC2626;
+  --color-brand-red-light: #EF4444;
+  --color-brand-red-dark: #B91C1C;
+  --color-brand-black: #0A0A0A;
+  --color-brand-gold: #EAB308;
+  --color-brand-gold-light: #FACC15;
+  --color-brand-gold-dark: #CA8A04;
+  --color-brand-white: #FAFAFA;
+
+  --color-surface: #0A0A0A;
+  --color-surface-card: #111111;
+  --color-surface-hover: #1A1A1A;
+  --color-surface-border: #262626;
+  --color-surface-elevated: #1F1F1F;
+
+  --color-text-primary: #FAFAFA;
+  --color-text-secondary: #A3A3A3;
+  --color-text-muted: #525252;
+
+  --color-success: #22C55E;
+  --color-error: #EF4444;
+  --color-warning: #EAB308;
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
