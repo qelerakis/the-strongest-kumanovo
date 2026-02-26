@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/auth";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -7,6 +8,11 @@ import { revalidatePath } from "next/cache";
 import { scheduleSchema } from "@/lib/validators";
 
 export async function addClassSlot(formData: FormData) {
+  const session = await auth();
+  if (!session || session.user.role !== "admin") {
+    return { success: false, error: "Unauthorized" };
+  }
+
   try {
     const raw = {
       sportId: formData.get("sportId") as string,
@@ -40,6 +46,11 @@ export async function addClassSlot(formData: FormData) {
 }
 
 export async function updateClassSlot(id: string, formData: FormData) {
+  const session = await auth();
+  if (!session || session.user.role !== "admin") {
+    return { success: false, error: "Unauthorized" };
+  }
+
   try {
     const raw = {
       sportId: formData.get("sportId") as string,
@@ -75,6 +86,11 @@ export async function updateClassSlot(id: string, formData: FormData) {
 }
 
 export async function removeClassSlot(id: string) {
+  const session = await auth();
+  if (!session || session.user.role !== "admin") {
+    return { success: false, error: "Unauthorized" };
+  }
+
   try {
     await db.delete(schema.schedule).where(eq(schema.schedule.id, id));
 

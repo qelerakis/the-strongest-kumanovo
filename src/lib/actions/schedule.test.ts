@@ -15,6 +15,14 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
+const mockAuth = vi.fn().mockResolvedValue({
+  user: { id: "admin_user", username: "admin", role: "admin", memberId: null },
+});
+
+vi.mock("@/auth", () => ({
+  auth: (...args: unknown[]) => mockAuth(...args),
+}));
+
 const { addClassSlot, updateClassSlot, removeClassSlot } = await import(
   "./schedule"
 );
@@ -164,6 +172,30 @@ describe("schedule actions", () => {
 
       const remaining = await testDb.select().from(schema.schedule);
       expect(remaining).toHaveLength(2); // sched_1 and sched_3 remain
+    });
+  });
+
+  describe("auth guards", () => {
+    it("rejects unauthenticated addClassSlot", async () => {
+      mockAuth.mockResolvedValueOnce(null);
+      const fd = makeFormData({
+        sportId: "sport_mma",
+        dayOfWeek: "4",
+        startTime: "17:00",
+        endTime: "18:30",
+      });
+      const result = await addClassSlot(fd);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Unauthorized");
+    });
+
+    it("rejects member-role removeClassSlot", async () => {
+      mockAuth.mockResolvedValueOnce({
+        user: { id: "member_user", username: "member1", role: "member", memberId: "member_1" },
+      });
+      const result = await removeClassSlot("sched_1");
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Unauthorized");
     });
   });
 });

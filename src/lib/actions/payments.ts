@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/auth";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -7,6 +8,11 @@ import { revalidatePath } from "next/cache";
 import { paymentSchema } from "@/lib/validators";
 
 export async function logPayment(formData: FormData) {
+  const session = await auth();
+  if (!session || session.user.role !== "admin") {
+    return { success: false, error: "Unauthorized" };
+  }
+
   try {
     const raw = {
       memberId: formData.get("memberId") as string,
@@ -41,6 +47,11 @@ export async function logPayment(formData: FormData) {
 }
 
 export async function deletePayment(id: string) {
+  const session = await auth();
+  if (!session || session.user.role !== "admin") {
+    return { success: false, error: "Unauthorized" };
+  }
+
   try {
     await db.delete(schema.payments).where(eq(schema.payments.id, id));
 

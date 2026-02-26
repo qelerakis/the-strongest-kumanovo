@@ -15,6 +15,14 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
+const mockAuth = vi.fn().mockResolvedValue({
+  user: { id: "admin_user", username: "admin", role: "admin", memberId: null },
+});
+
+vi.mock("@/auth", () => ({
+  auth: (...args: unknown[]) => mockAuth(...args),
+}));
+
 const { updateTierPricing } = await import("./settings");
 
 describe("settings actions", () => {
@@ -60,6 +68,24 @@ describe("settings actions", () => {
         .from(schema.membershipTiers)
         .where(eq(schema.membershipTiers.id, "tier_standard"));
       expect(standard[0].monthlyPriceMkd).toBe(2500); // unchanged
+    });
+  });
+
+  describe("auth guards", () => {
+    it("rejects unauthenticated requests", async () => {
+      mockAuth.mockResolvedValueOnce(null);
+      const result = await updateTierPricing("tier_basic", 2000);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Unauthorized");
+    });
+
+    it("rejects member-role requests", async () => {
+      mockAuth.mockResolvedValueOnce({
+        user: { id: "member_user", username: "member1", role: "member", memberId: "member_1" },
+      });
+      const result = await updateTierPricing("tier_basic", 2000);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Unauthorized");
     });
   });
 });

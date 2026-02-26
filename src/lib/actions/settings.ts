@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/auth";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -7,6 +8,11 @@ import { revalidatePath } from "next/cache";
 import { tierPricingSchema } from "@/lib/validators";
 
 export async function updateTierPricing(tierId: string, newPrice: number) {
+  const session = await auth();
+  if (!session || session.user.role !== "admin") {
+    return { success: false, error: "Unauthorized" };
+  }
+
   try {
     const parsed = tierPricingSchema.safeParse({ monthlyPriceMkd: newPrice });
     if (!parsed.success) {

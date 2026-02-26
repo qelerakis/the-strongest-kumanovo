@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/auth";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -7,6 +8,11 @@ import { revalidatePath } from "next/cache";
 import { memberSchema } from "@/lib/validators";
 
 export async function createMember(formData: FormData) {
+  const session = await auth();
+  if (!session || session.user.role !== "admin") {
+    return { success: false, error: "Unauthorized" };
+  }
+
   try {
     const raw = {
       fullName: formData.get("fullName") as string,
@@ -72,6 +78,11 @@ export async function createMember(formData: FormData) {
 }
 
 export async function updateMember(id: string, formData: FormData) {
+  const session = await auth();
+  if (!session || session.user.role !== "admin") {
+    return { success: false, error: "Unauthorized" };
+  }
+
   try {
     const raw = {
       fullName: formData.get("fullName") as string,
@@ -142,6 +153,11 @@ export async function updateMember(id: string, formData: FormData) {
 }
 
 export async function toggleMemberStatus(id: string) {
+  const session = await auth();
+  if (!session || session.user.role !== "admin") {
+    return { success: false, error: "Unauthorized" };
+  }
+
   try {
     // Get current status
     const result = await db
@@ -172,6 +188,11 @@ export async function toggleMemberStatus(id: string) {
 }
 
 export async function deleteMember(id: string) {
+  const session = await auth();
+  if (!session || session.user.role !== "admin") {
+    return { success: false, error: "Unauthorized" };
+  }
+
   try {
     await db.delete(schema.members).where(eq(schema.members.id, id));
 

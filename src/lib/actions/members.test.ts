@@ -15,6 +15,14 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
+const mockAuth = vi.fn().mockResolvedValue({
+  user: { id: "admin_user", username: "admin", role: "admin", memberId: null },
+});
+
+vi.mock("@/auth", () => ({
+  auth: (...args: unknown[]) => mockAuth(...args),
+}));
+
 const { createMember, updateMember, toggleMemberStatus, deleteMember } =
   await import("./members");
 
@@ -240,6 +248,29 @@ describe("members actions", () => {
 
       const result = await deleteMember("member_1");
       expect(result.success).toBe(true);
+    });
+  });
+
+  describe("auth guards", () => {
+    it("rejects unauthenticated requests", async () => {
+      mockAuth.mockResolvedValueOnce(null);
+      const fd = makeFormData({
+        fullName: "Hacker",
+        membershipTierId: "tier_basic",
+        joinDate: "2026-01-01",
+      });
+      const result = await createMember(fd);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Unauthorized");
+    });
+
+    it("rejects member-role requests", async () => {
+      mockAuth.mockResolvedValueOnce({
+        user: { id: "member_user", username: "member1", role: "member", memberId: "member_1" },
+      });
+      const result = await toggleMemberStatus("member_1");
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Unauthorized");
     });
   });
 });

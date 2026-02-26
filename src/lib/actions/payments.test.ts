@@ -15,6 +15,14 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
+const mockAuth = vi.fn().mockResolvedValue({
+  user: { id: "admin_user", username: "admin", role: "admin", memberId: null },
+});
+
+vi.mock("@/auth", () => ({
+  auth: (...args: unknown[]) => mockAuth(...args),
+}));
+
 const { logPayment, deletePayment } = await import("./payments");
 
 function makeFormData(data: Record<string, string>): FormData {
@@ -134,6 +142,30 @@ describe("payments actions", () => {
 
       const remaining = await testDb.select().from(schema.payments);
       expect(remaining).toHaveLength(2); // pay_2 and pay_3 remain
+    });
+  });
+
+  describe("auth guards", () => {
+    it("rejects unauthenticated logPayment", async () => {
+      mockAuth.mockResolvedValueOnce(null);
+      const fd = makeFormData({
+        memberId: "member_1",
+        amountMkd: "1500",
+        paymentDate: "2026-03-01",
+        monthFor: "2026-03",
+      });
+      const result = await logPayment(fd);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Unauthorized");
+    });
+
+    it("rejects member-role deletePayment", async () => {
+      mockAuth.mockResolvedValueOnce({
+        user: { id: "member_user", username: "member1", role: "member", memberId: "member_1" },
+      });
+      const result = await deletePayment("pay_1");
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Unauthorized");
     });
   });
 });
