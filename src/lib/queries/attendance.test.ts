@@ -1,9 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { setupTestDb, seedTestData, type TestDb } from "@/test/db-setup";
-import type { Client } from "@libsql/client";
 
 let testDb: TestDb;
-let testClient: Client;
 
 vi.mock("@/db", () => ({
   get db() {
@@ -21,7 +19,6 @@ describe("attendance queries", () => {
   beforeEach(async () => {
     const setup = await setupTestDb();
     testDb = setup.db;
-    testClient = setup.client;
     await seedTestData(testDb);
   });
 

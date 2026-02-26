@@ -132,8 +132,11 @@ describe("paymentSchema", () => {
   });
 
   it("rejects missing memberId", () => {
-    const { memberId, ...rest } = validPayment;
-    const result = paymentSchema.safeParse(rest);
+    const result = paymentSchema.safeParse({
+      amountMkd: validPayment.amountMkd,
+      paymentDate: validPayment.paymentDate,
+      monthFor: validPayment.monthFor,
+    });
     expect(result.success).toBe(false);
   });
 
@@ -223,8 +226,10 @@ describe("scheduleSchema", () => {
   });
 
   it("rejects missing sportId", () => {
-    const { sportId, ...rest } = validSchedule;
-    const result = scheduleSchema.safeParse(rest);
+    const result = scheduleSchema.safeParse({
+      dayOfWeek: validSchedule.dayOfWeek,
+      startTime: validSchedule.startTime,
+    });
     expect(result.success).toBe(false);
   });
 

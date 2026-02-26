@@ -1,11 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { setupTestDb, seedTestData, type TestDb } from "@/test/db-setup";
-import type { Client } from "@libsql/client";
 import { eq } from "drizzle-orm";
 import * as schema from "@/db/schema";
 
 let testDb: TestDb;
-let testClient: Client;
 
 vi.mock("@/db", () => ({
   get db() {
@@ -33,7 +31,6 @@ describe("schedule actions", () => {
   beforeEach(async () => {
     const setup = await setupTestDb();
     testDb = setup.db;
-    testClient = setup.client;
     await seedTestData(testDb);
   });
 
