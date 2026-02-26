@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import * as schema from "@/db/schema";
-import { eq, and, sql, like, sum } from "drizzle-orm";
+import { eq, and, like, sum } from "drizzle-orm";
 import { getMonthsBetween, getCurrentMonth } from "@/lib/utils";
 
 /**

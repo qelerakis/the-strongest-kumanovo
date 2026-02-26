@@ -1,17 +1,15 @@
 import { getPaymentsSummary } from "@/lib/queries/payments";
 import { getAllMembers } from "@/lib/queries/members";
 import { getCurrentMonth } from "@/lib/utils";
-import { getTranslations } from "next-intl/server";
 import PageTransition from "@/components/motion/page-transition";
 import PaymentsOverview from "@/components/payments/payments-overview";
 
 export default async function PaymentsPage() {
   const currentMonth = getCurrentMonth();
 
-  const [summary, allMembers, t] = await Promise.all([
+  const [summary, allMembers] = await Promise.all([
     getPaymentsSummary(currentMonth),
     getAllMembers({ isActive: true }),
-    getTranslations("payments"),
   ]);
 
   // Build member options for the payment form select

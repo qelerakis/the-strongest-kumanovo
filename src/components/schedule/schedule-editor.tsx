@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import {
   Dialog,
@@ -37,13 +37,13 @@ interface ScheduleEditorProps {
   defaultDay?: number;
 }
 
-export default function ScheduleEditor({
-  isOpen,
+/** Inner form that remounts each time the dialog opens, resetting all state. */
+function ScheduleEditorInner({
   onClose,
   sports,
   slot,
   defaultDay = 1,
-}: ScheduleEditorProps) {
+}: Omit<ScheduleEditorProps, "isOpen">) {
   const t = useTranslations("schedule");
   const tDays = useTranslations("days");
   const tCommon = useTranslations("common");
@@ -57,23 +57,6 @@ export default function ScheduleEditor({
   const [endTime, setEndTime] = useState(slot?.endTime ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-
-  // Sync form state when the dialog opens with new context
-  useEffect(() => {
-    if (isOpen) {
-      setSportId(slot?.sportId ?? "");
-      setDayOfWeek(slot?.dayOfWeek ?? defaultDay);
-      setStartTime(slot?.startTime ?? "");
-      setEndTime(slot?.endTime ?? "");
-      setError(null);
-    }
-  }, [isOpen, slot, defaultDay]);
-
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      onClose();
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,78 +85,104 @@ export default function ScheduleEditor({
   const scheduleDays = [1, 2, 3, 4, 5, 6];
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <form onSubmit={handleSubmit}>
-        <DialogHeader>
-          <DialogTitle>
-            {isEditing ? t("editClass") : t("addClass")}
-          </DialogTitle>
-        </DialogHeader>
+    <form onSubmit={handleSubmit}>
+      <DialogHeader>
+        <DialogTitle>
+          {isEditing ? t("editClass") : t("addClass")}
+        </DialogTitle>
+      </DialogHeader>
 
-        <DialogContent className="flex flex-col gap-4">
-          <Select
-            label={t("sport")}
-            value={sportId}
-            onChange={(e) => setSportId(e.target.value)}
-            required
-          >
-            <option value="" disabled>
-              {t("sport")}
+      <DialogContent className="flex flex-col gap-4">
+        <Select
+          label={t("sport")}
+          value={sportId}
+          onChange={(e) => setSportId(e.target.value)}
+          required
+        >
+          <option value="" disabled>
+            {t("sport")}
+          </option>
+          {sports.map((sport) => (
+            <option key={sport.id} value={sport.id}>
+              {tSports(sport.nameKey)}
             </option>
-            {sports.map((sport) => (
-              <option key={sport.id} value={sport.id}>
-                {tSports(sport.nameKey)}
-              </option>
-            ))}
-          </Select>
+          ))}
+        </Select>
 
-          <Select
-            label={t("day")}
-            value={dayOfWeek}
-            onChange={(e) => setDayOfWeek(Number(e.target.value))}
-            required
-          >
-            {scheduleDays.map((day) => (
-              <option key={day} value={day}>
-                {tDays(String(day))}
-              </option>
-            ))}
-          </Select>
+        <Select
+          label={t("day")}
+          value={dayOfWeek}
+          onChange={(e) => setDayOfWeek(Number(e.target.value))}
+          required
+        >
+          {scheduleDays.map((day) => (
+            <option key={day} value={day}>
+              {tDays(String(day))}
+            </option>
+          ))}
+        </Select>
 
-          <Input
-            label={t("startTime")}
-            type="time"
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-            required
-          />
+        <Input
+          label={t("startTime")}
+          type="time"
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
+          required
+        />
 
-          <Input
-            label={t("endTime")}
-            type="time"
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
-          />
+        <Input
+          label={t("endTime")}
+          type="time"
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
+        />
 
-          {error && (
-            <p className="text-sm text-error">{error}</p>
-          )}
-        </DialogContent>
+        {error && (
+          <p className="text-sm text-error">{error}</p>
+        )}
+      </DialogContent>
 
-        <DialogFooter>
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => handleOpenChange(false)}
-            disabled={isPending}
-          >
-            {tCommon("cancel")}
-          </Button>
-          <Button type="submit" loading={isPending}>
-            {tCommon("save")}
-          </Button>
-        </DialogFooter>
-      </form>
+      <DialogFooter>
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onClose}
+          disabled={isPending}
+        >
+          {tCommon("cancel")}
+        </Button>
+        <Button type="submit" loading={isPending}>
+          {tCommon("save")}
+        </Button>
+      </DialogFooter>
+    </form>
+  );
+}
+
+export default function ScheduleEditor({
+  isOpen,
+  onClose,
+  sports,
+  slot,
+  defaultDay = 1,
+}: ScheduleEditorProps) {
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      onClose();
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      {isOpen && (
+        <ScheduleEditorInner
+          key={`${String(isOpen)}-${slot?.id ?? "new"}`}
+          onClose={onClose}
+          sports={sports}
+          slot={slot}
+          defaultDay={defaultDay}
+        />
+      )}
     </Dialog>
   );
 }

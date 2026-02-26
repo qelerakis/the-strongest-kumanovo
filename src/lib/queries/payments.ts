@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import * as schema from "@/db/schema";
-import { eq, desc, sum, sql } from "drizzle-orm";
+import { eq, desc, sum } from "drizzle-orm";
 
 /**
  * Get all payments for a specific member, ordered by payment date descending.
