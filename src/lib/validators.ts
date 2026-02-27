@@ -5,7 +5,6 @@ export const memberSchema = z.object({
   phone: z.string().optional(),
   email: z.string().email("Invalid email format").optional().or(z.literal("")),
   dateOfBirth: z.string().optional(),
-  emergencyContact: z.string().optional(),
   membershipTierId: z.string().min(1, "Membership tier is required"),
   beltRank: z
     .enum(["white", "blue", "purple", "brown", "black"])
@@ -58,3 +57,14 @@ export const tierPricingSchema = z.object({
 });
 
 export type TierPricingFormData = z.infer<typeof tierPricingSchema>;
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string().min(6, "New password must be at least 6 characters"),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
+export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;

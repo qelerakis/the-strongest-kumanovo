@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DatePicker } from "@/components/ui/date-picker";
 import { formatTime, cn } from "@/lib/utils";
 
 export interface ClassSession {
@@ -43,21 +44,10 @@ export default function ClassPicker({
         <h2 className="text-lg font-semibold text-text-primary">
           {t("todayClasses")}
         </h2>
-        <div className="flex items-center gap-2">
-          <label
-            htmlFor="attendance-date"
-            className="text-sm text-text-secondary"
-          >
-            {t("selectDate")}:
-          </label>
-          <input
-            id="attendance-date"
-            type="date"
-            value={selectedDate}
-            onChange={(e) => onDateChange(e.target.value)}
-            className="rounded-lg border border-surface-border bg-surface-card px-3 py-1.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-2 focus:ring-offset-surface"
-          />
-        </div>
+        <DatePicker
+          value={selectedDate}
+          onChange={onDateChange}
+        />
       </div>
 
       {sessions.length === 0 ? (

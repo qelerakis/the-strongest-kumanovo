@@ -5,6 +5,7 @@ import {
   scheduleSchema,
   credentialsSchema,
   tierPricingSchema,
+  changePasswordSchema,
 } from "./validators";
 
 describe("memberSchema", () => {
@@ -20,7 +21,6 @@ describe("memberSchema", () => {
       phone: "+389 70 123 456",
       email: "stefan@example.com",
       dateOfBirth: "1995-05-10",
-      emergencyContact: "Parent: +389 71 000 000",
       beltRank: "blue",
       notes: "Experienced fighter",
     });
@@ -371,6 +371,75 @@ describe("tierPricingSchema", () => {
 
   it("rejects float value", () => {
     const result = tierPricingSchema.safeParse({ monthlyPriceMkd: 1500.5 });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("changePasswordSchema", () => {
+  const validData = {
+    currentPassword: "OldPass123",
+    newPassword: "NewPass456",
+    confirmPassword: "NewPass456",
+  };
+
+  it("accepts valid matching passwords", () => {
+    const result = changePasswordSchema.safeParse(validData);
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects empty current password", () => {
+    const result = changePasswordSchema.safeParse({
+      ...validData,
+      currentPassword: "",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects short new password (5 chars)", () => {
+    const result = changePasswordSchema.safeParse({
+      ...validData,
+      newPassword: "12345",
+      confirmPassword: "12345",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts minimum length new password (6 chars)", () => {
+    const result = changePasswordSchema.safeParse({
+      ...validData,
+      newPassword: "123456",
+      confirmPassword: "123456",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects empty confirm password", () => {
+    const result = changePasswordSchema.safeParse({
+      ...validData,
+      confirmPassword: "",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects mismatched passwords", () => {
+    const result = changePasswordSchema.safeParse({
+      ...validData,
+      newPassword: "NewPass456",
+      confirmPassword: "DifferentPass789",
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const paths = result.error.issues.map((i) => i.path.join("."));
+      expect(paths).toContain("confirmPassword");
+    }
+  });
+
+  it("rejects when all fields are empty", () => {
+    const result = changePasswordSchema.safeParse({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
     expect(result.success).toBe(false);
   });
 });

@@ -110,7 +110,6 @@
     "phone": "Телефон",
     "email": "Е-пошта",
     "dateOfBirth": "Датум на раѓање",
-    "emergencyContact": "Контакт за итни случаи",
     "membershipTier": "Пакет",
     "beltRank": "Ранг на појас",
     "joinDate": "Датум на зачленување",
@@ -184,6 +183,12 @@
     "monthlyPrice": "Месечна цена (МКД)",
     "sportsAllowed": "Дозволени спортови",
     "unlimited": "Неограничено",
-    "priceSaved": "Цената е ажурирана"
+    "priceSaved": "Цената е ажурирана",
+    "changePassword": "Промени лозинка",
+    "currentPassword": "Тековна лозинка",
+    "newPassword": "Нова лозинка",
+    "confirmPassword": "Потврди нова лозинка",
+    "passwordChanged": "Лозинката е успешно променета",
+    "wrongPassword": "Тековната лозинка е неточна"
   }
 }

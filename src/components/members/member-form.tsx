@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -31,7 +32,6 @@ interface MemberData {
   phone: string | null;
   email: string | null;
   dateOfBirth: string | null;
-  emergencyContact: string | null;
   membershipTierId: string;
   beltRank: string | null;
   joinDate: string;
@@ -61,6 +61,8 @@ export default function MemberForm({
 
   const isEdit = !!member;
 
+  const [dateOfBirth, setDateOfBirth] = useState(member?.dateOfBirth || "");
+  const [joinDate, setJoinDate] = useState(member?.joinDate || "");
   const [selectedTierId, setSelectedTierId] = useState(
     member?.membershipTierId || ""
   );
@@ -163,17 +165,11 @@ export default function MemberForm({
               defaultValue={member?.email || ""}
               type="email"
             />
-            <Input
+            <DatePicker
               name="dateOfBirth"
               label={t("dateOfBirth")}
-              defaultValue={member?.dateOfBirth || ""}
-              type="date"
-            />
-            <Input
-              name="emergencyContact"
-              label={t("emergencyContact")}
-              defaultValue={member?.emergencyContact || ""}
-              className="sm:col-span-2"
+              value={dateOfBirth}
+              onChange={setDateOfBirth}
             />
           </div>
 
@@ -216,11 +212,11 @@ export default function MemberForm({
               ))}
             </Select>
 
-            <Input
+            <DatePicker
               name="joinDate"
               label={t("joinDate")}
-              defaultValue={member?.joinDate || ""}
-              type="date"
+              value={joinDate}
+              onChange={setJoinDate}
               error={errors.joinDate}
               required
             />

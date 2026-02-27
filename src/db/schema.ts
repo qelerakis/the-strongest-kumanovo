@@ -30,7 +30,6 @@ export const members = sqliteTable("members", {
   phone: text("phone"),
   email: text("email"),
   dateOfBirth: text("date_of_birth"),
-  emergencyContact: text("emergency_contact"),
   membershipTierId: text("membership_tier_id")
     .references(() => membershipTiers.id)
     .notNull(),

@@ -30,7 +30,6 @@ const CREATE_TABLES_SQL = [
     phone TEXT,
     email TEXT,
     date_of_birth TEXT,
-    emergency_contact TEXT,
     membership_tier_id TEXT NOT NULL REFERENCES membership_tiers(id),
     belt_rank TEXT DEFAULT 'white',
     join_date TEXT NOT NULL,

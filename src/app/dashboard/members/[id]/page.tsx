@@ -101,7 +101,6 @@ export default async function MemberDetailPage({ params }: Props) {
             phone: member.phone,
             email: member.email,
             dateOfBirth: member.dateOfBirth,
-            emergencyContact: member.emergencyContact,
             membershipTierId: member.membershipTierId,
             beltRank: member.beltRank,
             joinDate: member.joinDate,
