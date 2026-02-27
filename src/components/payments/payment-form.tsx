@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/ui/date-picker";
 import { logPayment } from "@/lib/actions/payments";
 import { getCurrentMonth } from "@/lib/utils";
 
@@ -127,19 +128,18 @@ function PaymentFormInner({
           required
         />
 
-        <Input
+        <DatePicker
           label={t("paymentDate")}
-          type="date"
           value={paymentDate}
-          onChange={(e) => setPaymentDate(e.target.value)}
+          onChange={setPaymentDate}
           required
         />
 
-        <Input
+        <DatePicker
           label={t("monthFor")}
-          type="month"
           value={monthFor}
-          onChange={(e) => setMonthFor(e.target.value)}
+          onChange={setMonthFor}
+          mode="month"
           required
         />
 
