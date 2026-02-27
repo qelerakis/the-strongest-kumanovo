@@ -175,6 +175,12 @@
     "monthlyPrice": "Monthly Price (MKD)",
     "sportsAllowed": "Sports Allowed",
     "unlimited": "Unlimited",
-    "priceSaved": "Price updated successfully"
+    "priceSaved": "Price updated successfully",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "passwordChanged": "Password changed successfully",
+    "wrongPassword": "Current password is incorrect"
   }
 }
