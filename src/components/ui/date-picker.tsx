@@ -126,8 +126,10 @@ function DatePicker({
     mode === "date" ? (value ? initialMonth : todayMonth) : 0
   );
 
-  // Sync viewing state when value changes externally
-  useEffect(() => {
+  // Sync viewing state when value changes externally (render-time pattern)
+  const [prevValue, setPrevValue] = useState(value);
+  if (prevValue !== value) {
+    setPrevValue(value);
     if (value && mode === "date") {
       const y = parseInt(value.substring(0, 4), 10);
       const m = parseInt(value.substring(5, 7), 10) - 1;
@@ -141,7 +143,7 @@ function DatePicker({
         setViewYear(y);
       }
     }
-  }, [value, mode]);
+  }
 
   // Click outside to close
   useEffect(() => {
