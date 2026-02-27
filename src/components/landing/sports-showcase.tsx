@@ -18,12 +18,6 @@ const sports = [
       "Develop powerful striking combinations. Train your speed, precision, and conditioning through stand-up combat.",
   },
   {
-    nameKey: "wrestling" as const,
-    color: "#2563EB",
-    description:
-      "Learn takedowns, control, and mat dominance. Build explosive strength and unbreakable mental toughness.",
-  },
-  {
     nameKey: "mma" as const,
     color: "#22C55E",
     description:
@@ -70,7 +64,7 @@ export default function SportsShowcase() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           {sports.map((sport) => (
             <motion.div

@@ -134,16 +134,6 @@ export async function seedTestData(db: TestDb) {
     })
     .returning();
 
-  const [wrestling] = await db
-    .insert(schema.sports)
-    .values({
-      id: "sport_wr",
-      name: "Wrestling",
-      nameKey: "wrestling",
-      color: "#2563EB",
-    })
-    .returning();
-
   const [mma] = await db
     .insert(schema.sports)
     .values({
@@ -350,7 +340,7 @@ export async function seedTestData(db: TestDb) {
   });
 
   return {
-    sports: { bjj, kickboxing, wrestling, mma },
+    sports: { bjj, kickboxing, mma },
     tiers: { basicTier, standardTier, premiumTier },
     members: { member1, member2, member3 },
     scheduleSlots: { schedSlot1, schedSlot2, schedSlot3 },

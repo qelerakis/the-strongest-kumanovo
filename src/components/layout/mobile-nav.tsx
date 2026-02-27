@@ -243,7 +243,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
         {/* Bottom branding */}
         <div className="absolute bottom-0 left-0 right-0 border-t border-surface-border px-6 py-4">
           <p className="text-xs text-text-muted">
-            BJJ &bull; Kickboxing &bull; Wrestling &bull; MMA
+            BJJ &bull; Kickboxing &bull; MMA
           </p>
         </div>
       </div>

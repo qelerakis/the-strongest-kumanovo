@@ -25,7 +25,7 @@ A martial arts gym management web application serving **The Strongest Kumanovo**
 
 ## 1. System Overview
 
-The Strongest Kumanovo is a server-rendered Next.js application that manages day-to-day operations for a martial arts gym offering BJJ, Kickboxing, Wrestling, and MMA. An admin manages members, records payments, takes attendance, and configures the weekly class schedule. Members can log in to view their own profile, attendance history, and payment balance.
+The Strongest Kumanovo is a server-rendered Next.js application that manages day-to-day operations for a martial arts gym offering BJJ, Kickboxing, and MMA. An admin manages members, records payments, takes attendance, and configures the weekly class schedule. Members can log in to view their own profile, attendance history, and payment balance.
 
 ### System Diagram
 
@@ -165,7 +165,7 @@ the-strongest-kumanovo/
 |   |   |   +-- locale-switcher.tsx   # EN/MK language toggle
 |   |   +-- landing/                  # Public landing page sections
 |   |   |   +-- hero.tsx              # Hero banner with CTA
-|   |   |   +-- sports-showcase.tsx   # Sports grid (BJJ, Kickboxing, Wrestling, MMA)
+|   |   |   +-- sports-showcase.tsx   # Sports grid (BJJ, Kickboxing, MMA)
 |   |   |   +-- schedule-display.tsx  # Public weekly schedule view
 |   |   |   +-- contact-section.tsx   # Contact information and map
 |   |   +-- members/                  # Member management components
@@ -361,7 +361,7 @@ A positive balance means credit; negative means debt. This approach guarantees a
 
 The seed script (`src/db/seed.ts`) populates foundational data required for the application to function:
 
-1. **Sports**: BJJ, Kickboxing, Wrestling, MMA -- each with a brand color and an i18n `nameKey`.
+1. **Sports**: BJJ, Kickboxing, MMA -- each with a brand color and an i18n `nameKey`.
 2. **Membership Tiers**: Basic (1 sport, 1500 MKD), Standard (2 sports, 2500 MKD), Premium (unlimited, 3500 MKD).
 3. **Admin User**: A default admin account (`admin`/`admin123`) with role `"admin"` and no associated member profile.
 4. **Default Schedule**: A realistic weekly class schedule with 8 slots across Monday, Tuesday, Wednesday, Thursday, and Saturday.

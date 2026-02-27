@@ -185,7 +185,7 @@ export function Sidebar() {
       {/* Bottom branding */}
       <div className="border-t border-surface-border px-6 py-4">
         <p className="text-xs text-text-muted">
-          BJJ &bull; Kickboxing &bull; Wrestling &bull; MMA
+          BJJ &bull; Kickboxing &bull; MMA
         </p>
       </div>
     </aside>

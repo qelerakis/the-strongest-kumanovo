@@ -68,7 +68,7 @@ Organized by domain. Each directory maps to a feature area:
 
 ### landing/
 - `Hero` - Landing page hero section
-- `SportsShowcase` - Display of the 4 sports
+- `SportsShowcase` - Display of the 3 sports
 - `ScheduleDisplay` - Public-facing weekly schedule
 - `ContactSection` - Gym contact info
 
@@ -86,7 +86,7 @@ Organized by domain. Each directory maps to a feature area:
 |-------|-------------|-------|
 | `users` | username, passwordHash, role (admin/member), memberId? | Auth accounts. Admin has no memberId. |
 | `members` | fullName, phone?, email?, dateOfBirth?, emergencyContact?, membershipTierId, beltRank?, joinDate, isActive, notes? | Core member profiles. |
-| `sports` | name, nameKey, color? | 4 sports: BJJ, Kickboxing, Wrestling, MMA. |
+| `sports` | name, nameKey, color? | 3 sports: BJJ, Kickboxing, MMA. |
 | `membership_tiers` | name, nameKey, sportsAllowed, monthlyPriceMkd, isActive | Basic/Standard/Premium. sportsAllowed=-1 means unlimited. |
 | `member_sports` | memberId, sportId | Junction table. Unique(memberId, sportId). |
 | `schedule` | sportId, dayOfWeek (0-6), startTime, endTime?, isActive | Recurring weekly class slots. |
@@ -99,7 +99,7 @@ Creates libSQL client from `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN`, wraps with
 
 ### seed.ts - Database Seeder
 Run with `npm run db:seed`. Seeds:
-- 4 sports (BJJ red, Kickboxing gold, Wrestling blue, MMA green)
+- 3 sports (BJJ red, Kickboxing gold, MMA green)
 - 3 tiers (Basic 1500, Standard 2500, Premium 3500 MKD)
 - Admin user (admin / admin123)
 - Default weekly schedule (8 class slots across Mon/Tue/Wed/Thu/Sat)

@@ -70,7 +70,7 @@ describe("schedule actions", () => {
 
     it("creates a slot without endTime", async () => {
       const fd = makeFormData({
-        sportId: "sport_wr",
+        sportId: "sport_mma",
         dayOfWeek: "5", // Friday
         startTime: "16:00",
         endTime: "",
@@ -82,7 +82,7 @@ describe("schedule actions", () => {
       const slots = await testDb
         .select()
         .from(schema.schedule)
-        .where(eq(schema.schedule.sportId, "sport_wr"));
+        .where(eq(schema.schedule.sportId, "sport_mma"));
       expect(slots).toHaveLength(1);
       expect(slots[0].endTime).toBeNull();
     });

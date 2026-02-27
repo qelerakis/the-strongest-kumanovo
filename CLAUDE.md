@@ -1,7 +1,7 @@
 # The Strongest Kumanovo - Gym Management App
 
 ## Project Overview
-Martial arts gym management web app for a gym in Kumanovo, North Macedonia. Manages members, attendance, cash payments across 4 sports: BJJ, Kickboxing, Wrestling, MMA. Admin dashboard + member read-only view. Bilingual EN/MK.
+Martial arts gym management web app for a gym in Kumanovo, North Macedonia. Manages members, attendance, cash payments across 3 sports: BJJ, Kickboxing, MMA. Admin dashboard + member read-only view. Bilingual EN/MK.
 
 ## Tech Stack
 - Next.js 16.1.6 (App Router) + TypeScript 5
@@ -96,7 +96,7 @@ messages/
 - Tiers: Basic (1 sport, 1500 MKD), Standard (2 sports, 2500 MKD), Premium (all sports, 3500 MKD)
 - Premium tier uses `sportsAllowed: -1` to represent unlimited
 - <3 monthly attendances = flagged for potential fee waiver
-- Sports: BJJ, Kickboxing, Wrestling, MMA
+- Sports: BJJ, Kickboxing, MMA
 - Belt ranks: white, blue, purple, brown, black
 - Cash payments only (no online processing)
 - Currency: Macedonian Denar (MKD)

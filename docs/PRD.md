@@ -115,7 +115,7 @@ A single-gym web application that gives the owner a centralized dashboard to man
 
 ### Member (Athlete)
 
-- **Name archetype:** A BJJ / Kickboxing / Wrestling / MMA practitioner
+- **Name archetype:** A BJJ / Kickboxing / MMA practitioner
 - **Context:** Trains at the gym regularly. Pays monthly in cash.
 - **Needs:**
   - View their weekly class schedule.
@@ -242,7 +242,7 @@ A single-gym web application that gives the owner a centralized dashboard to man
 **Default Seed Schedule**
 - Pre-seeded schedule covering Monday through Saturday:
   - Monday: BJJ 18:30-19:30, Kickboxing 19:30+
-  - Tuesday: BJJ 19:00, Wrestling 20:00
+  - Tuesday: BJJ 19:00, MMA 20:00
   - Wednesday: Kickboxing 19:00
   - Thursday: BJJ 19:00, MMA 20:00
   - Saturday: BJJ 12:00, Kickboxing 13:00
@@ -285,7 +285,7 @@ A read-only area at `/member` for authenticated members.
 A public-facing page at the root URL (`/`).
 
 - **Hero Section**: Gym name "The Strongest Kumanovo", tagline "Train Hard. Fight Easy."
-- **Sports Showcase**: Display of the 4 disciplines (BJJ, Kickboxing, Wrestling, MMA).
+- **Sports Showcase**: Display of the 3 disciplines (BJJ, Kickboxing, MMA).
 - **Weekly Schedule**: Public view of the class schedule grid.
 - **Contact Information**: Gym location and contact details.
 - **Sign In Link**: Navigation to `/login`.
@@ -404,7 +404,7 @@ The database is seeded with a default weekly schedule:
 | Monday    | BJJ        | 18:30  | 19:30  |
 | Monday    | Kickboxing | 19:30  | --     |
 | Tuesday   | BJJ        | 19:00  | --     |
-| Tuesday   | Wrestling  | 20:00  | --     |
+| Tuesday   | MMA        | 20:00  | --     |
 | Wednesday | Kickboxing | 19:00  | --     |
 | Thursday  | BJJ        | 19:00  | --     |
 | Thursday  | MMA        | 20:00  | --     |
@@ -434,7 +434,7 @@ The database is seeded with a default weekly schedule:
 | Red        | `#DC2626` | Primary accent, BJJ sport color, CTAs       |
 | Gold       | `#EAB308` | Secondary accent, Kickboxing sport color    |
 | White      | `#FAFAFA` | Primary text, headings                      |
-| Blue       | `#2563EB` | Wrestling sport color                       |
+| Blue       | `#2563EB` | Blue belt rank color                        |
 | Green      | `#22C55E` | MMA sport color, success states             |
 
 ### Design Principles

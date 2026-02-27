@@ -15,20 +15,14 @@ async function seed() {
 
   // Seed sports
   const sportsData = [
-    { id: createId(), name: "BJJ", nameKey: "sports.bjj", color: "#DC2626" },
+    { id: createId(), name: "BJJ", nameKey: "bjj", color: "#DC2626" },
     {
       id: createId(),
       name: "Kickboxing",
-      nameKey: "sports.kickboxing",
+      nameKey: "kickboxing",
       color: "#EAB308",
     },
-    {
-      id: createId(),
-      name: "Wrestling",
-      nameKey: "sports.wrestling",
-      color: "#2563EB",
-    },
-    { id: createId(), name: "MMA", nameKey: "sports.mma", color: "#22C55E" },
+    { id: createId(), name: "MMA", nameKey: "mma", color: "#22C55E" },
   ];
 
   for (const sport of sportsData) {
@@ -41,21 +35,21 @@ async function seed() {
     {
       id: createId(),
       name: "Basic",
-      nameKey: "tiers.basic",
+      nameKey: "basic",
       sportsAllowed: 1,
       monthlyPriceMkd: 1500,
     },
     {
       id: createId(),
       name: "Standard",
-      nameKey: "tiers.standard",
+      nameKey: "standard",
       sportsAllowed: 2,
       monthlyPriceMkd: 2500,
     },
     {
       id: createId(),
       name: "Premium",
-      nameKey: "tiers.premium",
+      nameKey: "premium",
       sportsAllowed: -1,
       monthlyPriceMkd: 3500,
     },
@@ -84,8 +78,7 @@ async function seed() {
   // dayOfWeek: 0=Sunday, 1=Monday, ..., 6=Saturday
   const bjj = sportsData[0];
   const kickboxing = sportsData[1];
-  const wrestling = sportsData[2];
-  const mma = sportsData[3];
+  const mma = sportsData[2];
 
   const scheduleData = [
     // Monday
@@ -109,7 +102,7 @@ async function seed() {
       endTime: null,
     },
     {
-      sportId: wrestling.id,
+      sportId: mma.id,
       dayOfWeek: 2,
       startTime: "20:00",
       endTime: null,

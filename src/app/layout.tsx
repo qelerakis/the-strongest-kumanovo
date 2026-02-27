@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "The Strongest Kumanovo",
-  description: "Martial arts gym management - BJJ, Kickboxing, Wrestling, MMA",
+  description: "Martial arts gym management - BJJ, Kickboxing, MMA",
 };
 
 export default async function RootLayout({
