@@ -11,6 +11,7 @@ interface DatePickerProps {
   required?: boolean;
   className?: string;
   name?: string;
+  placeholder?: string;
 }
 
 const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
@@ -100,6 +101,7 @@ function DatePicker({
   required,
   className = "",
   name,
+  placeholder,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -270,7 +272,7 @@ function DatePicker({
         } ${open ? "ring-2 ring-brand-red ring-offset-1 ring-offset-surface" : ""}`}
       >
         <span className={value ? "text-text-primary" : "text-text-muted"}>
-          {value ? formatDisplayValue() : mode === "date" ? "Select date" : "Select month"}
+          {value ? formatDisplayValue() : placeholder ?? (mode === "date" ? "Select date" : "Select month")}
         </span>
         <CalendarIcon />
       </button>
