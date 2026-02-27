@@ -32,7 +32,6 @@ interface MemberData {
   phone: string | null;
   email: string | null;
   dateOfBirth: string | null;
-  emergencyContact: string | null;
   membershipTierId: string;
   beltRank: string | null;
   joinDate: string;
@@ -171,12 +170,6 @@ export default function MemberForm({
               label={t("dateOfBirth")}
               value={dateOfBirth}
               onChange={setDateOfBirth}
-            />
-            <Input
-              name="emergencyContact"
-              label={t("emergencyContact")}
-              defaultValue={member?.emergencyContact || ""}
-              className="sm:col-span-2"
             />
           </div>
 

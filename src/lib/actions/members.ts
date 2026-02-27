@@ -19,8 +19,6 @@ export async function createMember(formData: FormData) {
       phone: (formData.get("phone") as string) || undefined,
       email: (formData.get("email") as string) || "",
       dateOfBirth: (formData.get("dateOfBirth") as string) || undefined,
-      emergencyContact:
-        (formData.get("emergencyContact") as string) || undefined,
       membershipTierId: formData.get("membershipTierId") as string,
       beltRank:
         (formData.get("beltRank") as string as
@@ -48,7 +46,6 @@ export async function createMember(formData: FormData) {
         phone: parsed.data.phone || null,
         email: parsed.data.email || null,
         dateOfBirth: parsed.data.dateOfBirth || null,
-        emergencyContact: parsed.data.emergencyContact || null,
         membershipTierId: parsed.data.membershipTierId,
         beltRank: parsed.data.beltRank || "white",
         joinDate: parsed.data.joinDate,
@@ -89,8 +86,6 @@ export async function updateMember(id: string, formData: FormData) {
       phone: (formData.get("phone") as string) || undefined,
       email: (formData.get("email") as string) || "",
       dateOfBirth: (formData.get("dateOfBirth") as string) || undefined,
-      emergencyContact:
-        (formData.get("emergencyContact") as string) || undefined,
       membershipTierId: formData.get("membershipTierId") as string,
       beltRank:
         (formData.get("beltRank") as string as
@@ -118,7 +113,6 @@ export async function updateMember(id: string, formData: FormData) {
         phone: parsed.data.phone || null,
         email: parsed.data.email || null,
         dateOfBirth: parsed.data.dateOfBirth || null,
-        emergencyContact: parsed.data.emergencyContact || null,
         membershipTierId: parsed.data.membershipTierId,
         beltRank: parsed.data.beltRank || "white",
         joinDate: parsed.data.joinDate,

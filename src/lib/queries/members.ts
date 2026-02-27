@@ -107,7 +107,6 @@ export async function getMemberById(id: string) {
       phone: schema.members.phone,
       email: schema.members.email,
       dateOfBirth: schema.members.dateOfBirth,
-      emergencyContact: schema.members.emergencyContact,
       beltRank: schema.members.beltRank,
       joinDate: schema.members.joinDate,
       isActive: schema.members.isActive,

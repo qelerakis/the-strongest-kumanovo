@@ -5,7 +5,6 @@ export const memberSchema = z.object({
   phone: z.string().optional(),
   email: z.string().email("Invalid email format").optional().or(z.literal("")),
   dateOfBirth: z.string().optional(),
-  emergencyContact: z.string().optional(),
   membershipTierId: z.string().min(1, "Membership tier is required"),
   beltRank: z
     .enum(["white", "blue", "purple", "brown", "black"])
