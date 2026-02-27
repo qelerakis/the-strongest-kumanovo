@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { TimePicker } from "@/components/ui/time-picker";
 import { addClassSlot, updateClassSlot } from "@/lib/actions/schedule";
 
 interface Sport {
@@ -122,19 +122,17 @@ function ScheduleEditorInner({
           ))}
         </Select>
 
-        <Input
+        <TimePicker
           label={t("startTime")}
-          type="time"
           value={startTime}
-          onChange={(e) => setStartTime(e.target.value)}
+          onChange={setStartTime}
           required
         />
 
-        <Input
+        <TimePicker
           label={t("endTime")}
-          type="time"
           value={endTime}
-          onChange={(e) => setEndTime(e.target.value)}
+          onChange={setEndTime}
         />
 
         {error && (
