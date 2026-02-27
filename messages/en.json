@@ -30,7 +30,10 @@
   "sports": {
     "bjj": "BJJ",
     "kickboxing": "Kickboxing",
-    "mma": "MMA"
+    "mma": "MMA",
+    "bjjDescription": "Master the art of grappling and ground fighting. Build technique, discipline, and resilience on the mat.",
+    "kickboxingDescription": "Develop powerful striking combinations. Train your speed, precision, and conditioning through stand-up combat.",
+    "mmaDescription": "Combine all disciplines into one complete fighting system. Train to be versatile, adaptive, and ready."
   },
   "tiers": {
     "basic": "Basic",
@@ -62,6 +65,11 @@
     "scheduleTitle": "Weekly Schedule",
     "sportsTitle": "Our Disciplines",
     "contactTitle": "Contact Us",
+    "contactAddress": "Address",
+    "contactPhone": "Phone",
+    "contactEmail": "Email",
+    "contactCountry": "North Macedonia",
+    "noClasses": "No classes scheduled yet.",
     "login": "Sign In"
   },
   "login": {

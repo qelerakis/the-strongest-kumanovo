@@ -116,21 +116,27 @@ describe("sports configuration", () => {
 
 describe("translation files", () => {
   describe("English translations (en.json)", () => {
-    it("has exactly 3 sport translations", () => {
-      const sportKeys = Object.keys(enMessages.sports);
-      expect(sportKeys).toHaveLength(3);
+    it("has sport name translations for all 3 sports", () => {
+      expect(enMessages.sports).toHaveProperty("bjj", "BJJ");
+      expect(enMessages.sports).toHaveProperty("kickboxing", "Kickboxing");
+      expect(enMessages.sports).toHaveProperty("mma", "MMA");
     });
 
-    it("has BJJ, Kickboxing, MMA translations", () => {
-      expect(enMessages.sports).toEqual({
-        bjj: "BJJ",
-        kickboxing: "Kickboxing",
-        mma: "MMA",
-      });
+    it("has sport description translations for all 3 sports", () => {
+      expect(enMessages.sports).toHaveProperty("bjjDescription");
+      expect(enMessages.sports).toHaveProperty("kickboxingDescription");
+      expect(enMessages.sports).toHaveProperty("mmaDescription");
+    });
+
+    it("sport descriptions are non-empty strings", () => {
+      expect(enMessages.sports.bjjDescription.length).toBeGreaterThan(10);
+      expect(enMessages.sports.kickboxingDescription.length).toBeGreaterThan(10);
+      expect(enMessages.sports.mmaDescription.length).toBeGreaterThan(10);
     });
 
     it("does not have a wrestling translation", () => {
       expect(enMessages.sports).not.toHaveProperty("wrestling");
+      expect(enMessages.sports).not.toHaveProperty("wrestlingDescription");
     });
 
     it("has exactly 3 tier translations", () => {
@@ -148,19 +154,27 @@ describe("translation files", () => {
   });
 
   describe("Macedonian translations (mk.json)", () => {
-    it("has exactly 3 sport translations", () => {
-      const sportKeys = Object.keys(mkMessages.sports);
-      expect(sportKeys).toHaveLength(3);
-    });
-
-    it("has bjj, kickboxing, mma keys", () => {
+    it("has sport name translations for all 3 sports", () => {
       expect(mkMessages.sports).toHaveProperty("bjj");
       expect(mkMessages.sports).toHaveProperty("kickboxing");
       expect(mkMessages.sports).toHaveProperty("mma");
     });
 
+    it("has sport description translations for all 3 sports", () => {
+      expect(mkMessages.sports).toHaveProperty("bjjDescription");
+      expect(mkMessages.sports).toHaveProperty("kickboxingDescription");
+      expect(mkMessages.sports).toHaveProperty("mmaDescription");
+    });
+
+    it("sport descriptions are non-empty strings", () => {
+      expect(mkMessages.sports.bjjDescription.length).toBeGreaterThan(10);
+      expect(mkMessages.sports.kickboxingDescription.length).toBeGreaterThan(10);
+      expect(mkMessages.sports.mmaDescription.length).toBeGreaterThan(10);
+    });
+
     it("does not have a wrestling translation", () => {
       expect(mkMessages.sports).not.toHaveProperty("wrestling");
+      expect(mkMessages.sports).not.toHaveProperty("wrestlingDescription");
     });
 
     it("has exactly 3 tier translations", () => {

@@ -37,14 +37,14 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <h3 className="mb-1 text-sm font-semibold text-brand-white">
-                    Address
+                    {t("contactAddress")}
                   </h3>
                   <p className="text-sm leading-relaxed text-text-secondary">
-                    ul. 11 Oktomvri bb
+                    Mosha Pijade 218
                     <br />
-                    Kumanovo, 1300
+                    Kumanovo 1300
                     <br />
-                    North Macedonia
+                    {t("contactCountry")}
                   </p>
                 </div>
               </div>
@@ -69,10 +69,13 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <h3 className="mb-1 text-sm font-semibold text-brand-white">
-                    Phone
+                    {t("contactPhone")}
                   </h3>
                   <p className="text-sm text-text-secondary">
-                    +389 70 123 456
+                    077-705-039 (BJJ / MMA)
+                  </p>
+                  <p className="text-sm text-text-secondary">
+                    077-954-818 (Kick-box)
                   </p>
                 </div>
               </div>
@@ -98,41 +101,10 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <h3 className="mb-1 text-sm font-semibold text-brand-white">
-                    Email
+                    {t("contactEmail")}
                   </h3>
                   <p className="text-sm text-text-secondary">
                     info@thestrongest.mk
-                  </p>
-                </div>
-              </div>
-
-              {/* Hours */}
-              <div className="flex gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-red/10">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-brand-red"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="mb-1 text-sm font-semibold text-brand-white">
-                    Training Hours
-                  </h3>
-                  <p className="text-sm leading-relaxed text-text-secondary">
-                    Mon - Fri: 9:00 AM - 9:00 PM
-                    <br />
-                    Sat: 10:00 AM - 2:00 PM
                   </p>
                 </div>
               </div>

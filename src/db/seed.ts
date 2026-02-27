@@ -86,7 +86,7 @@ async function seed() {
       sportId: bjj.id,
       dayOfWeek: 1,
       startTime: "18:30",
-      endTime: "19:30",
+      endTime: null,
     },
     {
       sportId: kickboxing.id,
@@ -114,6 +114,12 @@ async function seed() {
       startTime: "19:00",
       endTime: null,
     },
+    {
+      sportId: kickboxing.id,
+      dayOfWeek: 3,
+      startTime: "20:00",
+      endTime: null,
+    },
     // Thursday
     {
       sportId: bjj.id,
@@ -125,6 +131,13 @@ async function seed() {
       sportId: mma.id,
       dayOfWeek: 4,
       startTime: "20:00",
+      endTime: null,
+    },
+    // Friday
+    {
+      sportId: kickboxing.id,
+      dayOfWeek: 5,
+      startTime: "19:00",
       endTime: null,
     },
     // Saturday

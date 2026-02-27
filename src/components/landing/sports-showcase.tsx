@@ -5,24 +5,9 @@ import { useTranslations } from "next-intl";
 import FadeIn from "@/components/motion/fade-in";
 
 const sports = [
-  {
-    nameKey: "bjj" as const,
-    color: "#DC2626",
-    description:
-      "Master the art of grappling and ground fighting. Build technique, discipline, and resilience on the mat.",
-  },
-  {
-    nameKey: "kickboxing" as const,
-    color: "#EAB308",
-    description:
-      "Develop powerful striking combinations. Train your speed, precision, and conditioning through stand-up combat.",
-  },
-  {
-    nameKey: "mma" as const,
-    color: "#22C55E",
-    description:
-      "Combine all disciplines into one complete fighting system. Train to be versatile, adaptive, and ready.",
-  },
+  { nameKey: "bjj" as const, color: "#DC2626" },
+  { nameKey: "kickboxing" as const, color: "#EAB308" },
+  { nameKey: "mma" as const, color: "#22C55E" },
 ];
 
 const containerVariants = {
@@ -104,7 +89,7 @@ export default function SportsShowcase() {
                 </h3>
 
                 <p className="text-sm leading-relaxed text-text-secondary">
-                  {sport.description}
+                  {t(`${sport.nameKey}Description`)}
                 </p>
               </div>
             </motion.div>

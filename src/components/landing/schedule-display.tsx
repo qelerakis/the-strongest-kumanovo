@@ -40,7 +40,7 @@ export default function ScheduleDisplay({ schedule }: ScheduleDisplayProps) {
 
         {!hasAnySlots ? (
           <p className="text-center text-text-secondary">
-            No classes scheduled yet.
+            {t("noClasses")}
           </p>
         ) : (
           <>
@@ -65,7 +65,7 @@ export default function ScheduleDisplay({ schedule }: ScheduleDisplayProps) {
                       (schedule[day] ?? []).map((slot) => (
                         <div
                           key={slot.id}
-                          className="rounded-lg border border-surface-border bg-surface-card p-3 transition-colors hover:bg-surface-hover"
+                          className="rounded-lg border border-surface-border bg-surface-card p-3 text-center transition-colors hover:bg-surface-hover"
                           style={{
                             borderLeftWidth: "3px",
                             borderLeftColor: slot.sportColor ?? undefined,
@@ -110,7 +110,7 @@ export default function ScheduleDisplay({ schedule }: ScheduleDisplayProps) {
                             borderLeftColor: slot.sportColor ?? undefined,
                           }}
                         >
-                          <div className="flex-1">
+                          <div className="flex-1 text-center">
                             <Badge
                               variant={sportBadgeVariant(slot.sportColor)}
                               className="mb-1"
