@@ -60,19 +60,31 @@ async function seed() {
   }
   console.log("Membership tiers seeded.");
 
-  // Seed admin user
-  const adminPasswordHash = hashSync("admin123", 12);
+  // Seed admin users (Martin and Filip)
+  const martinPasswordHash = hashSync("Martin123", 12);
   await db
     .insert(schema.users)
     .values({
       id: createId(),
-      username: "admin",
-      passwordHash: adminPasswordHash,
+      username: "Martin",
+      passwordHash: martinPasswordHash,
       role: "admin",
       memberId: null,
     })
     .onConflictDoNothing();
-  console.log("Admin user seeded (username: admin, password: admin123).");
+
+  const filipPasswordHash = hashSync("Filip123", 12);
+  await db
+    .insert(schema.users)
+    .values({
+      id: createId(),
+      username: "Filip",
+      passwordHash: filipPasswordHash,
+      role: "admin",
+      memberId: null,
+    })
+    .onConflictDoNothing();
+  console.log("Admin users seeded (Martin/Martin123, Filip/Filip123).");
 
   // Seed default schedule
   // dayOfWeek: 0=Sunday, 1=Monday, ..., 6=Saturday
