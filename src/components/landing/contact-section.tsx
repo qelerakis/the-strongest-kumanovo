@@ -1,116 +1,86 @@
 "use client";
 
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import { useTranslations } from "next-intl";
-import FadeIn from "@/components/motion/fade-in";
+
+const EASE = [0.25, 0.1, 0.25, 1] as const;
 
 export default function ContactSection() {
   const t = useTranslations("landing");
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-20%" });
+
+  const stagger = (index: number) => ({
+    initial: { opacity: 0, y: 30 } as const,
+    animate: isInView ? { opacity: 1, y: 0 } : {},
+    transition: { duration: 0.6, delay: index * 0.15, ease: EASE },
+  });
 
   return (
-    <section id="contact" className="px-4 py-24 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl">
-        <FadeIn>
-          <div className="rounded-xl border border-surface-border bg-surface-card p-8 sm:p-12">
-            <h2 className="mb-8 text-center text-3xl font-bold text-brand-white sm:text-4xl">
-              {t("contactTitle")}
-            </h2>
+    <section
+      id="contact"
+      className="flex min-h-screen flex-col items-center justify-center px-6 py-32 sm:px-8 lg:px-12"
+    >
+      <div ref={ref} className="flex flex-col items-center text-center">
+        {/* Section label */}
+        <motion.span
+          {...stagger(0)}
+          className="mb-16 text-sm font-medium tracking-[0.2em] uppercase text-text-secondary"
+        >
+          {t("contactLabel")}
+        </motion.span>
 
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-              {/* Address */}
-              <div className="flex gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-red/10">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-brand-red"
-                  >
-                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="mb-1 text-sm font-semibold text-brand-white">
-                    {t("contactAddress")}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-text-secondary">
-                    Mosha Pijade 218
-                    <br />
-                    Kumanovo 1300
-                    <br />
-                    {t("contactCountry")}
-                  </p>
-                </div>
-              </div>
+        {/* Address — cinematic */}
+        <motion.p
+          {...stagger(1)}
+          className="font-display text-4xl font-extrabold leading-tight text-brand-white sm:text-5xl lg:text-6xl"
+        >
+          Mosha Pijade 218
+        </motion.p>
 
-              {/* Phone */}
-              <div className="flex gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-red/10">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-brand-red"
-                  >
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="mb-1 text-sm font-semibold text-brand-white">
-                    {t("contactPhone")}
-                  </h3>
-                  <p className="text-sm text-text-secondary">
-                    077-705-039 (BJJ / MMA)
-                  </p>
-                  <p className="text-sm text-text-secondary">
-                    077-954-818 (Kick-box)
-                  </p>
-                </div>
-              </div>
+        <motion.p
+          {...stagger(2)}
+          className="mt-2 font-display text-4xl font-extrabold leading-tight text-brand-gold sm:text-5xl lg:text-6xl"
+        >
+          Kumanovo 1300
+        </motion.p>
 
-              {/* Email */}
-              <div className="flex gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-red/10">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-brand-red"
-                  >
-                    <rect width="20" height="16" x="2" y="4" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="mb-1 text-sm font-semibold text-brand-white">
-                    {t("contactEmail")}
-                  </h3>
-                  <p className="text-sm text-text-secondary">
-                    info@thestrongest.mk
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </FadeIn>
+        <motion.p
+          {...stagger(3)}
+          className="mt-4 text-lg text-text-secondary sm:text-xl"
+        >
+          {t("contactCountry")}
+        </motion.p>
+
+        {/* Divider */}
+        <motion.div
+          initial={{ width: 0 }}
+          animate={isInView ? { width: 120 } : {}}
+          transition={{ duration: 0.5, delay: 0.6, ease: EASE }}
+          className="mt-12 h-px bg-surface-border"
+        />
+
+        {/* Phone numbers */}
+        <motion.div
+          {...stagger(5)}
+          className="mt-12 flex flex-col gap-2"
+        >
+          <p className="text-xl font-light text-text-secondary sm:text-2xl">
+            {t("phoneBjjMma")} <span className="text-text-muted">&mdash; {t("phoneBjjMmaLabel")}</span>
+          </p>
+          <p className="text-xl font-light text-text-secondary sm:text-2xl">
+            {t("phoneKickbox")} <span className="text-text-muted">&mdash; {t("phoneKickboxLabel")}</span>
+          </p>
+        </motion.div>
+
+        {/* Email */}
+        <motion.p
+          {...stagger(6)}
+          className="mt-6 text-lg text-text-secondary sm:text-xl"
+        >
+          {t("email")}
+        </motion.p>
       </div>
     </section>
   );
