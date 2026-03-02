@@ -1,8 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
+
+const EASE = [0.25, 0.1, 0.25, 1] as const;
 
 const containerVariants = {
   hidden: {},
@@ -19,84 +21,93 @@ const lineVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut" as const,
-    },
-  },
-};
-
-const buttonVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut" as const,
-    },
+    transition: { duration: 0.8, ease: EASE },
   },
 };
 
 export default function Hero() {
   const t = useTranslations("landing");
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  // Scroll-linked dissolve: as user scrolls past hero, text fades and drifts
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.15]);
+  const titleY = useTransform(scrollYProgress, [0, 0.5], [0, -60]);
+  const titleLetterSpacing = useTransform(scrollYProgress, [0, 0.5], [0, 5]);
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-surface">
-      {/* Background gradient with red accent glow */}
+    <section
+      ref={sectionRef}
+      className="relative flex min-h-screen items-center justify-center overflow-hidden"
+    >
+      {/* Soft radial red glow */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-red/5 via-transparent to-transparent" />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-brand-red/8 blur-[120px]" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-surface to-transparent" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-brand-red/6 blur-[150px]" />
       </div>
 
       <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 flex flex-col items-center gap-8 px-4 text-center"
+        style={{ opacity: titleOpacity, y: titleY }}
+        className="relative z-10 flex flex-col items-center px-4 text-center"
       >
-        {/* Main title */}
-        <div className="flex flex-col items-center gap-2">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col items-center"
+        >
+          {/* Title */}
           <motion.h1
             variants={lineVariants}
-            className="text-5xl font-extrabold tracking-tight text-brand-white sm:text-7xl lg:text-8xl"
+            style={{ letterSpacing: useTransform(titleLetterSpacing, (v) => `${-0.02 + v * 0.01}em`) }}
+            className="font-display text-6xl font-black leading-[0.9] text-brand-white sm:text-8xl lg:text-9xl"
           >
             {t("title").toUpperCase()}
           </motion.h1>
+
+          {/* Subtitle */}
           <motion.h2
             variants={lineVariants}
-            className="text-4xl font-extrabold tracking-tight text-brand-gold sm:text-6xl lg:text-7xl"
+            style={{ letterSpacing: useTransform(titleLetterSpacing, (v) => `${-0.02 + v * 0.01}em`) }}
+            className="font-display text-6xl font-black leading-[0.9] text-brand-gold sm:text-8xl lg:text-9xl"
           >
             {t("subtitle").toUpperCase()}
           </motion.h2>
-        </div>
 
-        {/* Tagline */}
-        <motion.p
-          variants={lineVariants}
-          className="text-lg text-text-secondary sm:text-xl lg:text-2xl"
-        >
-          {t("tagline")}
-        </motion.p>
+          {/* Tagline */}
+          <motion.p
+            variants={lineVariants}
+            className="mt-8 text-lg font-light text-text-secondary sm:text-xl"
+          >
+            {t("tagline")}
+          </motion.p>
 
-        {/* CTA buttons */}
-        <motion.div
-          variants={buttonVariants}
-          className="flex flex-col items-center gap-4 sm:flex-row"
-        >
-          <a
+          {/* Single CTA */}
+          <motion.a
+            variants={lineVariants}
             href="#schedule"
-            className="inline-flex items-center justify-center rounded-lg bg-brand-red px-8 py-3 text-base font-medium text-brand-white transition-colors hover:bg-brand-red-light active:bg-brand-red-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+            className="mt-10 inline-flex items-center gap-2 text-sm font-medium text-text-secondary transition-colors hover:text-brand-red"
           >
             {t("viewSchedule")}
-          </a>
-          <Link
-            href="/login"
-            className="inline-flex items-center justify-center rounded-lg border border-surface-border bg-transparent px-8 py-3 text-base font-medium text-text-primary transition-colors hover:bg-surface-hover active:bg-surface-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-          >
-            {t("login")}
-          </Link>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              className="animate-bounce"
+            >
+              <path
+                d="M8 3v10m0 0l-4-4m4 4l4-4"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </motion.a>
         </motion.div>
       </motion.div>
     </section>
