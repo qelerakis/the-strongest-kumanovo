@@ -137,32 +137,36 @@ describe("landing page i18n completeness", () => {
   });
 
   describe("contact section keys", () => {
-    it("has contact label keys in EN landing section", () => {
-      expect(enMessages.landing).toHaveProperty("contactAddress");
-      expect(enMessages.landing).toHaveProperty("contactPhone");
-      expect(enMessages.landing).toHaveProperty("contactEmail");
+    it("has contact keys in EN landing section", () => {
+      expect(enMessages.landing).toHaveProperty("contactLabel");
       expect(enMessages.landing).toHaveProperty("contactCountry");
+      expect(enMessages.landing).toHaveProperty("phoneBjjMma");
+      expect(enMessages.landing).toHaveProperty("phoneBjjMmaLabel");
+      expect(enMessages.landing).toHaveProperty("phoneKickbox");
+      expect(enMessages.landing).toHaveProperty("phoneKickboxLabel");
     });
 
-    it("has contact label keys in MK landing section", () => {
-      expect(mkMessages.landing).toHaveProperty("contactAddress");
-      expect(mkMessages.landing).toHaveProperty("contactPhone");
-      expect(mkMessages.landing).toHaveProperty("contactEmail");
+    it("has contact keys in MK landing section", () => {
+      expect(mkMessages.landing).toHaveProperty("contactLabel");
       expect(mkMessages.landing).toHaveProperty("contactCountry");
+      expect(mkMessages.landing).toHaveProperty("phoneBjjMma");
+      expect(mkMessages.landing).toHaveProperty("phoneBjjMmaLabel");
+      expect(mkMessages.landing).toHaveProperty("phoneKickbox");
+      expect(mkMessages.landing).toHaveProperty("phoneKickboxLabel");
     });
 
     it("MK contact labels are in Macedonian (differ from EN)", () => {
-      expect(mkMessages.landing.contactAddress).not.toBe(
-        enMessages.landing.contactAddress
-      );
-      expect(mkMessages.landing.contactPhone).not.toBe(
-        enMessages.landing.contactPhone
-      );
-      expect(mkMessages.landing.contactEmail).not.toBe(
-        enMessages.landing.contactEmail
+      expect(mkMessages.landing.contactLabel).not.toBe(
+        enMessages.landing.contactLabel
       );
       expect(mkMessages.landing.contactCountry).not.toBe(
         enMessages.landing.contactCountry
+      );
+      expect(mkMessages.landing.phoneBjjMmaLabel).not.toBe(
+        enMessages.landing.phoneBjjMmaLabel
+      );
+      expect(mkMessages.landing.phoneKickboxLabel).not.toBe(
+        enMessages.landing.phoneKickboxLabel
       );
     });
   });

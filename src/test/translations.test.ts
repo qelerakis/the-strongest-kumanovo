@@ -130,16 +130,16 @@ describe("landing section translations", () => {
       "subtitle",
       "tagline",
       "viewSchedule",
-      "joinUs",
-      "scheduleTitle",
-      "sportsTitle",
-      "contactTitle",
-      "contactAddress",
-      "contactPhone",
-      "contactEmail",
+      "scheduleLabel",
+      "sportsLabel",
+      "contactLabel",
       "contactCountry",
       "noClasses",
       "login",
+      "phoneBjjMma",
+      "phoneBjjMmaLabel",
+      "phoneKickbox",
+      "phoneKickboxLabel",
     ];
     for (const key of requiredKeys) {
       expect(enMessages.landing, `Missing EN landing key: ${key}`).toHaveProperty(key);
@@ -152,16 +152,16 @@ describe("landing section translations", () => {
       "subtitle",
       "tagline",
       "viewSchedule",
-      "joinUs",
-      "scheduleTitle",
-      "sportsTitle",
-      "contactTitle",
-      "contactAddress",
-      "contactPhone",
-      "contactEmail",
+      "scheduleLabel",
+      "sportsLabel",
+      "contactLabel",
       "contactCountry",
       "noClasses",
       "login",
+      "phoneBjjMma",
+      "phoneBjjMmaLabel",
+      "phoneKickbox",
+      "phoneKickboxLabel",
     ];
     for (const key of requiredKeys) {
       expect(mkMessages.landing, `Missing MK landing key: ${key}`).toHaveProperty(key);
@@ -180,10 +180,9 @@ describe("landing section translations", () => {
     expect(mkMessages.landing.tagline).not.toContain("Борби лесно");
   });
 
-  it("MK contact labels are translated", () => {
-    expect(mkMessages.landing.contactAddress).toBe("Адреса");
-    expect(mkMessages.landing.contactPhone).toBe("Телефон");
-    expect(mkMessages.landing.contactEmail).toBe("Е-пошта");
+  it("MK contact label is translated", () => {
+    expect(mkMessages.landing.contactLabel).toBeTruthy();
+    expect(mkMessages.landing.contactLabel).not.toBe(enMessages.landing.contactLabel);
   });
 
   it("MK country name is translated", () => {

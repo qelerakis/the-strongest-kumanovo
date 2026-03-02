@@ -38,6 +38,7 @@ export default function Hero() {
   const titleOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.15]);
   const titleY = useTransform(scrollYProgress, [0, 0.5], [0, -60]);
   const titleLetterSpacing = useTransform(scrollYProgress, [0, 0.5], [0, 5]);
+  const letterSpacingEm = useTransform(titleLetterSpacing, (v) => `${-0.02 + v * 0.01}em`);
 
   return (
     <section
@@ -62,7 +63,7 @@ export default function Hero() {
           {/* Title */}
           <motion.h1
             variants={lineVariants}
-            style={{ letterSpacing: useTransform(titleLetterSpacing, (v) => `${-0.02 + v * 0.01}em`) }}
+            style={{ letterSpacing: letterSpacingEm }}
             className="font-display text-6xl font-black leading-[0.9] text-brand-white sm:text-8xl lg:text-9xl"
           >
             {t("title").toUpperCase()}
@@ -71,7 +72,7 @@ export default function Hero() {
           {/* Subtitle */}
           <motion.h2
             variants={lineVariants}
-            style={{ letterSpacing: useTransform(titleLetterSpacing, (v) => `${-0.02 + v * 0.01}em`) }}
+            style={{ letterSpacing: letterSpacingEm }}
             className="font-display text-6xl font-black leading-[0.9] text-brand-gold sm:text-8xl lg:text-9xl"
           >
             {t("subtitle").toUpperCase()}
@@ -80,7 +81,7 @@ export default function Hero() {
           {/* Tagline */}
           <motion.p
             variants={lineVariants}
-            className="mt-8 text-lg font-light text-text-secondary sm:text-xl"
+            className="mt-6 text-lg font-light text-text-secondary sm:text-xl"
           >
             {t("tagline")}
           </motion.p>
@@ -89,7 +90,7 @@ export default function Hero() {
           <motion.a
             variants={lineVariants}
             href="#schedule"
-            className="mt-10 inline-flex items-center gap-2 text-sm font-medium text-text-secondary transition-colors hover:text-brand-red"
+            className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-text-secondary transition-colors hover:text-brand-red"
           >
             {t("viewSchedule")}
             <svg
@@ -97,6 +98,7 @@ export default function Hero() {
               height="16"
               viewBox="0 0 16 16"
               fill="none"
+              aria-hidden="true"
               className="animate-bounce"
             >
               <path

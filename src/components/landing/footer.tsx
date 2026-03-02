@@ -27,6 +27,7 @@ export default function Footer() {
         <button
           onClick={() => handleSwitch("en")}
           disabled={isPending}
+          aria-label="Switch to English"
           className={`text-sm transition-colors ${
             locale === "en"
               ? "text-brand-white font-medium"
@@ -39,6 +40,7 @@ export default function Footer() {
         <button
           onClick={() => handleSwitch("mk")}
           disabled={isPending}
+          aria-label="Switch to Macedonian"
           className={`text-sm transition-colors ${
             locale === "mk"
               ? "text-brand-white font-medium"

@@ -3,38 +3,15 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { useTranslations } from "next-intl";
+import {
+  SPORTS,
+  getAlignmentClasses,
+  getAccentLineClasses,
+  getSlideDirection,
+  type Alignment,
+} from "./landing-utils";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
-
-type Alignment = "left" | "right" | "center";
-
-const sports: { nameKey: "bjj" | "kickboxing" | "mma"; color: string; align: Alignment }[] = [
-  { nameKey: "bjj", color: "#B91C1C", align: "left" },
-  { nameKey: "kickboxing", color: "#A16207", align: "right" },
-  { nameKey: "mma", color: "#22C55E", align: "center" },
-];
-
-function getAlignmentClasses(align: Alignment) {
-  switch (align) {
-    case "left":
-      return "items-start text-left";
-    case "right":
-      return "items-end text-right";
-    case "center":
-      return "items-center text-center";
-  }
-}
-
-function getSlideDirection(align: Alignment): { x: number; y: number } {
-  switch (align) {
-    case "left":
-      return { x: -60, y: 0 };
-    case "right":
-      return { x: 60, y: 0 };
-    case "center":
-      return { x: 0, y: 40 };
-  }
-}
 
 function SportBlock({
   nameKey,
@@ -56,7 +33,7 @@ function SportBlock({
   return (
     <div
       ref={ref}
-      className={`flex min-h-screen flex-col justify-center px-6 py-32 sm:px-8 lg:px-24 ${getAlignmentClasses(align)}`}
+      className={`flex flex-col justify-center px-6 py-20 sm:px-8 lg:px-24 ${getAlignmentClasses(align)}`}
     >
       {/* Section label — only on first sport */}
       {isFirst && (
@@ -64,7 +41,7 @@ function SportBlock({
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, ease: EASE }}
-          className="mb-16 text-sm font-medium tracking-[0.2em] uppercase text-text-secondary"
+          className="mb-10 text-sm font-medium tracking-[0.2em] uppercase text-text-secondary"
         >
           {tLanding("sportsLabel")}
         </motion.span>
@@ -85,7 +62,7 @@ function SportBlock({
         initial={{ width: 0 }}
         animate={isInView ? { width: 80 } : {}}
         transition={{ duration: 0.5, delay: 0.2, ease: EASE }}
-        className={`mt-6 h-[2px] ${align === "center" ? "mx-auto" : ""}`}
+        className={`mt-4 h-[2px] ${getAccentLineClasses(align)}`}
         style={{ backgroundColor: color }}
       />
 
@@ -94,7 +71,7 @@ function SportBlock({
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
         transition={{ duration: 0.5, delay: 0.3, ease: EASE }}
-        className="mt-6 max-w-md text-lg leading-relaxed text-text-secondary lg:text-xl"
+        className="mt-4 max-w-md text-lg leading-relaxed text-text-secondary lg:text-xl"
       >
         {t(`${nameKey}Description`)}
       </motion.p>
@@ -105,7 +82,7 @@ function SportBlock({
 export default function SportsShowcase() {
   return (
     <section id="sports">
-      {sports.map((sport, i) => (
+      {SPORTS.map((sport, i) => (
         <SportBlock
           key={sport.nameKey}
           nameKey={sport.nameKey}

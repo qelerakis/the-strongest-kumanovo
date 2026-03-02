@@ -20,13 +20,13 @@ export default function ContactSection() {
   return (
     <section
       id="contact"
-      className="flex min-h-screen flex-col items-center justify-center px-6 py-32 sm:px-8 lg:px-12"
+      className="flex flex-col items-center justify-center px-6 py-20 sm:px-8 lg:px-12"
     >
       <div ref={ref} className="flex flex-col items-center text-center">
         {/* Section label */}
         <motion.span
           {...stagger(0)}
-          className="mb-16 text-sm font-medium tracking-[0.2em] uppercase text-text-secondary"
+          className="mb-10 text-sm font-medium tracking-[0.2em] uppercase text-text-secondary"
         >
           {t("contactLabel")}
         </motion.span>
@@ -58,29 +58,28 @@ export default function ContactSection() {
           initial={{ width: 0 }}
           animate={isInView ? { width: 120 } : {}}
           transition={{ duration: 0.5, delay: 0.6, ease: EASE }}
-          className="mt-12 h-px bg-surface-border"
+          className="mt-8 h-px bg-surface-border"
         />
 
         {/* Phone numbers */}
         <motion.div
-          {...stagger(5)}
-          className="mt-12 flex flex-col gap-2"
+          {...stagger(4)}
+          className="mt-8 flex flex-col gap-2"
         >
           <p className="text-xl font-light text-text-secondary sm:text-2xl">
-            {t("phoneBjjMma")} <span className="text-text-muted">&mdash; {t("phoneBjjMmaLabel")}</span>
+            <a href="tel:+38977705039" className="hover:text-brand-white transition-colors">
+              {t("phoneBjjMma")}
+            </a>{" "}
+            <span className="text-text-muted">&mdash; {t("phoneBjjMmaLabel")}</span>
           </p>
           <p className="text-xl font-light text-text-secondary sm:text-2xl">
-            {t("phoneKickbox")} <span className="text-text-muted">&mdash; {t("phoneKickboxLabel")}</span>
+            <a href="tel:+38977954818" className="hover:text-brand-white transition-colors">
+              {t("phoneKickbox")}
+            </a>{" "}
+            <span className="text-text-muted">&mdash; {t("phoneKickboxLabel")}</span>
           </p>
         </motion.div>
 
-        {/* Email */}
-        <motion.p
-          {...stagger(6)}
-          className="mt-6 text-lg text-text-secondary sm:text-xl"
-        >
-          {t("email")}
-        </motion.p>
       </div>
     </section>
   );

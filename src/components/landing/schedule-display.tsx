@@ -8,18 +8,9 @@ import type { getFullSchedule } from "@/lib/queries/schedule";
 
 type ScheduleData = Awaited<ReturnType<typeof getFullSchedule>>;
 
-const EASE = [0.25, 0.1, 0.25, 1] as const;
-const DISPLAY_DAYS = [1, 2, 3, 4, 5, 6] as const;
+import { DISPLAY_DAYS, mutedColor } from "./landing-utils";
 
-/** Map sport color to muted variant */
-function mutedColor(color: string | null): string {
-  if (!color) return "#A8A29E";
-  const c = color.toLowerCase();
-  if (c.includes("dc2626") || c.includes("ef4444") || c.includes("b91c1c")) return "#B91C1C";
-  if (c.includes("eab308") || c.includes("facc15") || c.includes("ca8a04")) return "#A16207";
-  if (c.includes("22c55e") || c.includes("16a34a")) return "#22C55E";
-  return "#A8A29E";
-}
+const EASE = [0.25, 0.1, 0.25, 1] as const;
 
 interface ScheduleDisplayProps {
   schedule: ScheduleData;
@@ -34,14 +25,14 @@ export default function ScheduleDisplay({ schedule }: ScheduleDisplayProps) {
   const hasAnySlots = Object.keys(schedule).length > 0;
 
   return (
-    <section id="schedule" className="flex min-h-screen flex-col items-center justify-center px-6 py-32 sm:px-8 lg:px-12">
+    <section id="schedule" className="flex flex-col items-center justify-center px-6 py-20 sm:px-8 lg:px-12">
       <div ref={ref} className="mx-auto w-full max-w-6xl">
         {/* Section label */}
         <motion.span
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, ease: EASE }}
-          className="mb-16 block text-center text-sm font-medium tracking-[0.2em] uppercase text-text-secondary"
+          className="mb-10 block text-center text-sm font-medium tracking-[0.2em] uppercase text-text-secondary"
         >
           {t("scheduleLabel")}
         </motion.span>
