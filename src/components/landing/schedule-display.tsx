@@ -1,25 +1,25 @@
+"use client";
+
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { Badge, type BadgeVariant } from "@/components/ui/badge";
 import { formatTime } from "@/lib/utils";
 import type { getFullSchedule } from "@/lib/queries/schedule";
 
 type ScheduleData = Awaited<ReturnType<typeof getFullSchedule>>;
 
-/** Map a sport color hex to the closest Badge variant */
-function sportBadgeVariant(color: string | null): BadgeVariant {
-  if (!color) return "default";
-  const c = color.toLowerCase();
-  if (c.includes("dc2626") || c.includes("ef4444") || c.includes("b91c1c"))
-    return "red";
-  if (c.includes("eab308") || c.includes("facc15") || c.includes("ca8a04"))
-    return "gold";
-  if (c.includes("2563eb") || c.includes("3b82f6")) return "blue";
-  if (c.includes("22c55e") || c.includes("16a34a")) return "green";
-  return "default";
-}
-
-// Days to display (Mon-Sat, skipping Sunday=0 if desired)
+const EASE = [0.25, 0.1, 0.25, 1] as const;
 const DISPLAY_DAYS = [1, 2, 3, 4, 5, 6] as const;
+
+/** Map sport color to muted variant */
+function mutedColor(color: string | null): string {
+  if (!color) return "#A8A29E";
+  const c = color.toLowerCase();
+  if (c.includes("dc2626") || c.includes("ef4444") || c.includes("b91c1c")) return "#B91C1C";
+  if (c.includes("eab308") || c.includes("facc15") || c.includes("ca8a04")) return "#A16207";
+  if (c.includes("22c55e") || c.includes("16a34a")) return "#22C55E";
+  return "#A8A29E";
+}
 
 interface ScheduleDisplayProps {
   schedule: ScheduleData;
@@ -28,106 +28,117 @@ interface ScheduleDisplayProps {
 export default function ScheduleDisplay({ schedule }: ScheduleDisplayProps) {
   const t = useTranslations("landing");
   const tDays = useTranslations("days");
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-15%" });
 
   const hasAnySlots = Object.keys(schedule).length > 0;
 
   return (
-    <section id="schedule" className="px-4 py-24 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <h2 className="mb-12 text-center text-3xl font-bold text-brand-white sm:text-4xl">
-          {t("scheduleTitle")}
-        </h2>
+    <section id="schedule" className="flex min-h-screen flex-col items-center justify-center px-6 py-32 sm:px-8 lg:px-12">
+      <div ref={ref} className="mx-auto w-full max-w-6xl">
+        {/* Section label */}
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6, ease: EASE }}
+          className="mb-16 block text-center text-sm font-medium tracking-[0.2em] uppercase text-text-secondary"
+        >
+          {t("scheduleLabel")}
+        </motion.span>
 
         {!hasAnySlots ? (
-          <p className="text-center text-text-secondary">
-            {t("noClasses")}
-          </p>
+          <p className="text-center text-lg text-text-secondary">{t("noClasses")}</p>
         ) : (
           <>
-            {/* Desktop: column-based weekly grid */}
-            <div className="hidden lg:grid lg:grid-cols-6 lg:gap-3">
-              {DISPLAY_DAYS.map((day) => (
-                <div key={day} className="flex flex-col">
+            {/* Desktop grid */}
+            <div className="hidden lg:grid lg:grid-cols-6 lg:gap-8">
+              {DISPLAY_DAYS.map((day, colIndex) => (
+                <motion.div
+                  key={day}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{
+                    duration: 0.5,
+                    delay: colIndex * 0.1,
+                    ease: EASE,
+                  }}
+                  className="flex flex-col"
+                >
                   {/* Day header */}
-                  <div className="mb-3 rounded-lg bg-surface-card border border-surface-border px-3 py-2 text-center">
-                    <span className="text-sm font-semibold text-brand-white">
+                  <div className="mb-6 border-b border-surface-border pb-3">
+                    <span className="text-lg font-semibold text-brand-white">
                       {tDays(String(day))}
                     </span>
                   </div>
 
                   {/* Slots */}
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-4">
                     {(schedule[day] ?? []).length === 0 ? (
-                      <div className="rounded-lg border border-surface-border/50 bg-surface-card/50 px-3 py-4 text-center">
-                        <span className="text-xs text-text-muted">--</span>
-                      </div>
+                      <span className="text-sm text-text-muted">&mdash;</span>
                     ) : (
                       (schedule[day] ?? []).map((slot) => (
-                        <div
-                          key={slot.id}
-                          className="rounded-lg border border-surface-border bg-surface-card p-3 text-center transition-colors hover:bg-surface-hover"
-                          style={{
-                            borderLeftWidth: "3px",
-                            borderLeftColor: slot.sportColor ?? undefined,
-                          }}
-                        >
-                          <Badge
-                            variant={sportBadgeVariant(slot.sportColor)}
-                            className="mb-1.5"
-                          >
-                            {slot.sportName}
-                          </Badge>
-                          <p className="text-xs text-text-secondary">
-                            {formatTime(slot.startTime)}
-                            {slot.endTime ? ` - ${formatTime(slot.endTime)}` : ""}
-                          </p>
+                        <div key={slot.id} className="flex items-start gap-3">
+                          <div
+                            className="mt-1.5 h-4 w-[2px] shrink-0 rounded-full"
+                            style={{ backgroundColor: mutedColor(slot.sportColor) }}
+                          />
+                          <div>
+                            <p className="text-base font-medium text-brand-white">
+                              {slot.sportName}
+                            </p>
+                            <p className="text-sm text-text-secondary">
+                              {formatTime(slot.startTime)}
+                              {slot.endTime ? ` \u2013 ${formatTime(slot.endTime)}` : ""}
+                            </p>
+                          </div>
                         </div>
                       ))
                     )}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
-            {/* Mobile / Tablet: stacked rows by day */}
-            <div className="flex flex-col gap-6 lg:hidden">
-              {DISPLAY_DAYS.map((day) => {
+            {/* Mobile layout */}
+            <div className="flex flex-col gap-10 lg:hidden">
+              {DISPLAY_DAYS.map((day, index) => {
                 const daySlots = schedule[day] ?? [];
                 if (daySlots.length === 0) return null;
 
                 return (
-                  <div key={day}>
-                    <h3 className="mb-3 text-sm font-semibold text-brand-white">
+                  <motion.div
+                    key={day}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{
+                      duration: 0.5,
+                      delay: index * 0.08,
+                      ease: EASE,
+                    }}
+                  >
+                    <h3 className="mb-4 text-lg font-semibold text-brand-white">
                       {tDays(String(day))}
                     </h3>
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <div className="flex flex-col gap-3">
                       {daySlots.map((slot) => (
-                        <div
-                          key={slot.id}
-                          className="flex items-center gap-3 rounded-lg border border-surface-border bg-surface-card p-3"
-                          style={{
-                            borderLeftWidth: "3px",
-                            borderLeftColor: slot.sportColor ?? undefined,
-                          }}
-                        >
-                          <div className="flex-1 text-center">
-                            <Badge
-                              variant={sportBadgeVariant(slot.sportColor)}
-                              className="mb-1"
-                            >
+                        <div key={slot.id} className="flex items-start gap-3">
+                          <div
+                            className="mt-1.5 h-4 w-[2px] shrink-0 rounded-full"
+                            style={{ backgroundColor: mutedColor(slot.sportColor) }}
+                          />
+                          <div>
+                            <p className="text-base font-medium text-brand-white">
                               {slot.sportName}
-                            </Badge>
-                            <p className="text-xs text-text-secondary">
+                            </p>
+                            <p className="text-sm text-text-secondary">
                               {formatTime(slot.startTime)}
-                              {slot.endTime
-                                ? ` - ${formatTime(slot.endTime)}`
-                                : ""}
+                              {slot.endTime ? ` \u2013 ${formatTime(slot.endTime)}` : ""}
                             </p>
                           </div>
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
