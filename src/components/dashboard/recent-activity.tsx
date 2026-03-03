@@ -84,14 +84,14 @@ export default function RecentActivity({
       <CardHeader>
         <div className="flex items-center gap-3">
           <ActivityIcon />
-          <CardTitle>{t("recentActivity")}</CardTitle>
+          <CardTitle>{t("recentPayments")}</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         {recentPayments.length === 0 ? (
           <div className="flex items-center justify-center rounded-lg border border-dashed border-surface-border py-8">
             <p className="text-sm text-text-muted">
-              {t("noRecentActivity")}
+              {t("noRecentPayments")}
             </p>
           </div>
         ) : (
