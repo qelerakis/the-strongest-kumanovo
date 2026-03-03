@@ -53,6 +53,19 @@ export function cn(
 }
 
 /**
+ * Increment a "YYYY-MM" string by `offset` months.
+ * Example: incrementMonth("2026-03", 2) => "2026-05"
+ * Example: incrementMonth("2026-11", 2) => "2027-01"
+ */
+export function incrementMonth(yearMonth: string, offset: number): string {
+  const [y, m] = yearMonth.split("-").map(Number);
+  const date = new Date(y, m - 1 + offset, 1);
+  const newYear = date.getFullYear();
+  const newMonth = String(date.getMonth() + 1).padStart(2, "0");
+  return `${newYear}-${newMonth}`;
+}
+
+/**
  * Get an array of "YYYY-MM" strings between two dates (inclusive).
  * Example: getMonthsBetween("2025-10-15", "2026-01-05") => ["2025-10", "2025-11", "2025-12", "2026-01"]
  */

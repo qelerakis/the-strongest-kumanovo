@@ -40,13 +40,14 @@ export default function ClassPicker({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
+      <div className="flex items-center gap-4 flex-wrap">
         <h2 className="text-lg font-semibold text-text-primary">
           {t("todayClasses")}
         </h2>
         <DatePicker
           value={selectedDate}
           onChange={onDateChange}
+          className="w-auto"
         />
       </div>
 

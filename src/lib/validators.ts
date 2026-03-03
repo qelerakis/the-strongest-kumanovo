@@ -22,6 +22,7 @@ export const paymentSchema = z.object({
   monthFor: z
     .string()
     .regex(/^\d{4}-\d{2}$/, "Must be in YYYY-MM format"),
+  numberOfMonths: z.number().int().min(1).max(6).default(1),
   notes: z.string().optional(),
 });
 

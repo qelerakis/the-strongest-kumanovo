@@ -156,7 +156,11 @@
     "totalPaid": "Вкупно платено",
     "totalOwed": "Вкупно должи",
     "noPayments": "Нема забележани плаќања",
-    "member": "Член"
+    "member": "Член",
+    "numberOfMonths": "Број на месеци",
+    "startingMonth": "Почетен месец",
+    "expectedAmount": "Очекувано: {amount} ({price} x {months})",
+    "advancePayment": "Авансно плаќање {current}/{total}"
   },
   "schedule": {
     "title": "Распоред",

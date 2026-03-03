@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import {
   Dialog,
@@ -14,11 +14,12 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
 import { logPayment } from "@/lib/actions/payments";
-import { getCurrentMonth } from "@/lib/utils";
+import { getCurrentMonth, formatMKD } from "@/lib/utils";
 
 interface MemberOption {
   id: string;
   fullName: string;
+  tierPrice: number;
 }
 
 interface PaymentFormProps {
@@ -41,7 +42,13 @@ function PaymentFormInner({
   const currentMonth = getCurrentMonth();
 
   const [memberId, setMemberId] = useState(defaultMemberId ?? "");
-  const [amountMkd, setAmountMkd] = useState("");
+  const [numberOfMonths, setNumberOfMonths] = useState(1);
+  const defaultMember = defaultMemberId
+    ? members.find((m) => m.id === defaultMemberId)
+    : undefined;
+  const [amountMkd, setAmountMkd] = useState(
+    defaultMember ? String(defaultMember.tierPrice) : ""
+  );
   const [paymentDate, setPaymentDate] = useState(today);
   const [monthFor, setMonthFor] = useState(currentMonth);
   const [notes, setNotes] = useState("");
@@ -49,6 +56,27 @@ function PaymentFormInner({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  const selectedMember = members.find((m) => m.id === memberId);
+  const expectedAmount = selectedMember
+    ? selectedMember.tierPrice * numberOfMonths
+    : 0;
+
+  // Auto-fill amount when member or numberOfMonths changes
+  const handleMemberChange = useCallback((newMemberId: string) => {
+    setMemberId(newMemberId);
+    const member = members.find((m) => m.id === newMemberId);
+    if (member) {
+      setAmountMkd(String(member.tierPrice * numberOfMonths));
+    }
+  }, [members, numberOfMonths]);
+
+  const handleMonthsChange = useCallback((newMonths: number) => {
+    setNumberOfMonths(newMonths);
+    if (selectedMember) {
+      setAmountMkd(String(selectedMember.tierPrice * newMonths));
+    }
+  }, [selectedMember]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +87,7 @@ function PaymentFormInner({
     formData.set("amountMkd", amountMkd);
     formData.set("paymentDate", paymentDate);
     formData.set("monthFor", monthFor);
+    formData.set("numberOfMonths", String(numberOfMonths));
     formData.set("notes", notes);
 
     startTransition(async () => {
@@ -103,7 +132,7 @@ function PaymentFormInner({
           />
           <Select
             value={memberId}
-            onChange={(e) => setMemberId(e.target.value)}
+            onChange={(e) => handleMemberChange(e.target.value)}
             required
           >
             <option value="" disabled>
@@ -117,6 +146,20 @@ function PaymentFormInner({
           </Select>
         </div>
 
+        {/* Number of months */}
+        <Select
+          label={t("numberOfMonths")}
+          value={String(numberOfMonths)}
+          onChange={(e) => handleMonthsChange(Number(e.target.value))}
+        >
+          {[1, 2, 3, 4, 5, 6].map((n) => (
+            <option key={n} value={n}>
+              {n}
+            </option>
+          ))}
+        </Select>
+
+        {/* Amount */}
         <Input
           label={t("amount")}
           type="number"
@@ -128,6 +171,17 @@ function PaymentFormInner({
           required
         />
 
+        {/* Expected amount hint for multi-month */}
+        {numberOfMonths > 1 && selectedMember && (
+          <p className="text-xs text-text-muted -mt-2">
+            {t("expectedAmount", {
+              amount: formatMKD(expectedAmount),
+              price: formatMKD(selectedMember.tierPrice),
+              months: numberOfMonths,
+            })}
+          </p>
+        )}
+
         <DatePicker
           label={t("paymentDate")}
           value={paymentDate}
@@ -136,7 +190,7 @@ function PaymentFormInner({
         />
 
         <DatePicker
-          label={t("monthFor")}
+          label={numberOfMonths > 1 ? t("startingMonth") : t("monthFor")}
           value={monthFor}
           onChange={setMonthFor}
           mode="month"

@@ -27,6 +27,7 @@ interface MemberSummary {
 interface MemberOption {
   id: string;
   fullName: string;
+  tierPrice: number;
 }
 
 interface PaymentsOverviewProps {

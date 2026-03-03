@@ -16,6 +16,7 @@ export default async function PaymentsPage() {
   const memberOptions = allMembers.map((m) => ({
     id: m.id,
     fullName: m.fullName,
+    tierPrice: m.tierPrice,
   }));
 
   return (

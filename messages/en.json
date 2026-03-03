@@ -156,7 +156,11 @@
     "totalPaid": "Total Paid",
     "totalOwed": "Total Owed",
     "noPayments": "No payments recorded",
-    "member": "Member"
+    "member": "Member",
+    "numberOfMonths": "Number of Months",
+    "startingMonth": "Starting Month",
+    "expectedAmount": "Expected: {amount} ({price} x {months})",
+    "advancePayment": "Advance payment {current}/{total}"
   },
   "schedule": {
     "title": "Schedule",

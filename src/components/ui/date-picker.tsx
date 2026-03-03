@@ -273,7 +273,7 @@ function DatePicker({
         id={inputId}
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`flex w-full items-center justify-between rounded-lg border bg-surface-card px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-1 focus:ring-offset-surface ${
+        className={`flex w-full items-center justify-between gap-2 rounded-lg border bg-surface-card px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-1 focus:ring-offset-surface ${
           error
             ? "border-error focus:ring-error"
             : "border-surface-border hover:border-text-muted"

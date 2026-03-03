@@ -6,6 +6,7 @@ import {
   getCurrentMonth,
   cn,
   getMonthsBetween,
+  incrementMonth,
 } from "./utils";
 
 describe("formatMKD", () => {
@@ -127,6 +128,45 @@ describe("cn", () => {
 
   it("returns empty string with no arguments", () => {
     expect(cn()).toBe("");
+  });
+});
+
+describe("incrementMonth", () => {
+  it("increments by 1 month within the same year", () => {
+    expect(incrementMonth("2026-03", 1)).toBe("2026-04");
+  });
+
+  it("returns same month when offset is 0", () => {
+    expect(incrementMonth("2026-06", 0)).toBe("2026-06");
+  });
+
+  it("increments multiple months within the same year", () => {
+    expect(incrementMonth("2026-01", 5)).toBe("2026-06");
+  });
+
+  it("wraps from December to January across year boundary", () => {
+    expect(incrementMonth("2026-11", 2)).toBe("2027-01");
+  });
+
+  it("wraps exactly from December to January", () => {
+    expect(incrementMonth("2026-12", 1)).toBe("2027-01");
+  });
+
+  it("handles large offset spanning a full year", () => {
+    expect(incrementMonth("2026-03", 12)).toBe("2027-03");
+  });
+
+  it("handles large offset spanning multiple years", () => {
+    expect(incrementMonth("2025-06", 24)).toBe("2027-06");
+  });
+
+  it("pads single-digit months with leading zero", () => {
+    expect(incrementMonth("2026-01", 0)).toBe("2026-01");
+    expect(incrementMonth("2026-08", 1)).toBe("2026-09");
+  });
+
+  it("handles wrapping from October to February (across year)", () => {
+    expect(incrementMonth("2026-10", 4)).toBe("2027-02");
   });
 });
 

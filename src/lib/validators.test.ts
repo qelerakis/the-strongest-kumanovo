@@ -195,6 +195,75 @@ describe("paymentSchema", () => {
     });
     expect(result.success).toBe(true);
   });
+
+  describe("numberOfMonths", () => {
+    it("defaults to 1 when omitted", () => {
+      const result = paymentSchema.safeParse(validPayment);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.numberOfMonths).toBe(1);
+      }
+    });
+
+    it("accepts minimum value of 1", () => {
+      const result = paymentSchema.safeParse({
+        ...validPayment,
+        numberOfMonths: 1,
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("accepts maximum value of 6", () => {
+      const result = paymentSchema.safeParse({
+        ...validPayment,
+        numberOfMonths: 6,
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("accepts mid-range value of 3", () => {
+      const result = paymentSchema.safeParse({
+        ...validPayment,
+        numberOfMonths: 3,
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.numberOfMonths).toBe(3);
+      }
+    });
+
+    it("rejects 0 (below minimum)", () => {
+      const result = paymentSchema.safeParse({
+        ...validPayment,
+        numberOfMonths: 0,
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it("rejects 7 (above maximum)", () => {
+      const result = paymentSchema.safeParse({
+        ...validPayment,
+        numberOfMonths: 7,
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it("rejects negative value", () => {
+      const result = paymentSchema.safeParse({
+        ...validPayment,
+        numberOfMonths: -1,
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it("rejects float value", () => {
+      const result = paymentSchema.safeParse({
+        ...validPayment,
+        numberOfMonths: 2.5,
+      });
+      expect(result.success).toBe(false);
+    });
+  });
 });
 
 describe("scheduleSchema", () => {
