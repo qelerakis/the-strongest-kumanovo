@@ -7,6 +7,12 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { scheduleSchema } from "@/lib/validators";
 
+function revalidateSchedulePaths() {
+  revalidatePath("/dashboard/schedule");
+  revalidatePath("/");
+  revalidatePath("/member");
+}
+
 export async function addClassSlot(formData: FormData) {
   const session = await auth();
   if (!session || session.user.role !== "admin") {
@@ -37,7 +43,7 @@ export async function addClassSlot(formData: FormData) {
       isActive: true,
     });
 
-    revalidatePath("/dashboard/schedule");
+    revalidateSchedulePaths();
     return { success: true };
   } catch (error) {
     console.error("Failed to add class slot:", error);
@@ -77,7 +83,7 @@ export async function updateClassSlot(id: string, formData: FormData) {
       })
       .where(eq(schema.schedule.id, id));
 
-    revalidatePath("/dashboard/schedule");
+    revalidateSchedulePaths();
     return { success: true };
   } catch (error) {
     console.error("Failed to update class slot:", error);
@@ -94,7 +100,7 @@ export async function removeClassSlot(id: string) {
   try {
     await db.delete(schema.schedule).where(eq(schema.schedule.id, id));
 
-    revalidatePath("/dashboard/schedule");
+    revalidateSchedulePaths();
     return { success: true };
   } catch (error) {
     console.error("Failed to remove class slot:", error);

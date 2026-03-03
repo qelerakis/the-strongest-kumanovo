@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { setupTestDb, seedTestData, type TestDb } from "@/test/db-setup";
 import { eq } from "drizzle-orm";
 import * as schema from "@/db/schema";
+import { revalidatePath } from "next/cache";
 
 let testDb: TestDb;
 
@@ -27,6 +28,8 @@ const { addClassSlot, updateClassSlot, removeClassSlot } = await import(
   "./schedule"
 );
 
+const mockRevalidatePath = vi.mocked(revalidatePath);
+
 function makeFormData(data: Record<string, string>): FormData {
   const fd = new FormData();
   for (const [key, value] of Object.entries(data)) {
@@ -35,11 +38,18 @@ function makeFormData(data: Record<string, string>): FormData {
   return fd;
 }
 
+const EXPECTED_REVALIDATION_PATHS = ["/dashboard/schedule", "/", "/member"];
+
 describe("schedule actions", () => {
   beforeEach(async () => {
     const setup = await setupTestDb();
     testDb = setup.db;
     await seedTestData(testDb);
+    mockRevalidatePath.mockClear();
+    mockAuth.mockReset();
+    mockAuth.mockResolvedValue({
+      user: { id: "admin_user", username: "admin", role: "admin", memberId: null },
+    });
   });
 
   describe("addClassSlot", () => {
@@ -196,6 +206,143 @@ describe("schedule actions", () => {
       const result = await removeClassSlot("sched_1");
       expect(result.success).toBe(false);
       expect(result.error).toBe("Unauthorized");
+    });
+
+    it("rejects unauthenticated updateClassSlot", async () => {
+      mockAuth.mockResolvedValueOnce(null);
+      const fd = makeFormData({
+        sportId: "sport_kb",
+        dayOfWeek: "1",
+        startTime: "19:00",
+        endTime: "20:30",
+      });
+      const result = await updateClassSlot("sched_1", fd);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Unauthorized");
+    });
+
+    it("rejects member-role addClassSlot", async () => {
+      mockAuth.mockResolvedValueOnce({
+        user: { id: "member_user", username: "member1", role: "member", memberId: "member_1" },
+      });
+      const fd = makeFormData({
+        sportId: "sport_mma",
+        dayOfWeek: "4",
+        startTime: "17:00",
+      });
+      const result = await addClassSlot(fd);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Unauthorized");
+    });
+
+    it("rejects member-role updateClassSlot", async () => {
+      mockAuth.mockResolvedValueOnce({
+        user: { id: "member_user", username: "member1", role: "member", memberId: "member_1" },
+      });
+      const fd = makeFormData({
+        sportId: "sport_kb",
+        dayOfWeek: "1",
+        startTime: "19:00",
+      });
+      const result = await updateClassSlot("sched_1", fd);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Unauthorized");
+    });
+  });
+
+  describe("cache revalidation", () => {
+    it("revalidates all schedule-consuming paths after addClassSlot", async () => {
+      const fd = makeFormData({
+        sportId: "sport_mma",
+        dayOfWeek: "4",
+        startTime: "17:00",
+        endTime: "18:30",
+      });
+
+      await addClassSlot(fd);
+
+      for (const path of EXPECTED_REVALIDATION_PATHS) {
+        expect(mockRevalidatePath).toHaveBeenCalledWith(path);
+      }
+      expect(mockRevalidatePath).toHaveBeenCalledTimes(
+        EXPECTED_REVALIDATION_PATHS.length,
+      );
+    });
+
+    it("revalidates all schedule-consuming paths after updateClassSlot", async () => {
+      const fd = makeFormData({
+        sportId: "sport_kb",
+        dayOfWeek: "1",
+        startTime: "19:00",
+        endTime: "20:30",
+      });
+
+      await updateClassSlot("sched_1", fd);
+
+      for (const path of EXPECTED_REVALIDATION_PATHS) {
+        expect(mockRevalidatePath).toHaveBeenCalledWith(path);
+      }
+      expect(mockRevalidatePath).toHaveBeenCalledTimes(
+        EXPECTED_REVALIDATION_PATHS.length,
+      );
+    });
+
+    it("revalidates all schedule-consuming paths after removeClassSlot", async () => {
+      await removeClassSlot("sched_2");
+
+      for (const path of EXPECTED_REVALIDATION_PATHS) {
+        expect(mockRevalidatePath).toHaveBeenCalledWith(path);
+      }
+      expect(mockRevalidatePath).toHaveBeenCalledTimes(
+        EXPECTED_REVALIDATION_PATHS.length,
+      );
+    });
+
+    it("does NOT revalidate when addClassSlot fails validation", async () => {
+      const fd = makeFormData({
+        sportId: "",
+        dayOfWeek: "1",
+        startTime: "18:00",
+      });
+
+      await addClassSlot(fd);
+
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+
+    it("does NOT revalidate when updateClassSlot fails validation", async () => {
+      const fd = makeFormData({
+        sportId: "",
+        dayOfWeek: "1",
+        startTime: "18:00",
+      });
+
+      await updateClassSlot("sched_1", fd);
+
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+
+    it("does NOT revalidate when auth fails", async () => {
+      mockAuth.mockResolvedValueOnce(null);
+      const fd = makeFormData({
+        sportId: "sport_mma",
+        dayOfWeek: "4",
+        startTime: "17:00",
+      });
+
+      await addClassSlot(fd);
+
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+
+    it("does NOT revalidate when member role attempts removeClassSlot", async () => {
+      mockAuth.mockResolvedValueOnce({
+        user: { id: "member_user", username: "member1", role: "member", memberId: "member_1" },
+      });
+
+      await removeClassSlot("sched_1");
+
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
     });
   });
 });
