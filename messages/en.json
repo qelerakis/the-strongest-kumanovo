@@ -102,9 +102,7 @@
     "paidFor": "{member} paid {amount} for {month}",
     "attendanceBySport": "Attendance by Sport",
     "noClassSessions": "No class sessions recorded",
-    "attendees": "{count} attendees",
-    "classDate": "Date",
-    "classTime": "Time"
+    "attendees": "{count} attendees"
   },
   "members": {
     "title": "Members",

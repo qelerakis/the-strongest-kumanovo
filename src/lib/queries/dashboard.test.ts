@@ -17,7 +17,7 @@ vi.mock("@/lib/utils", async (importOriginal) => {
   };
 });
 
-const { getDashboardStats, getFlaggedMembers, getRecentPayments } =
+const { getDashboardStats, getFlaggedMembers, getRecentPayments, getRecentClassSessionsBySport } =
   await import("./dashboard");
 
 describe("dashboard queries", () => {
@@ -132,4 +132,95 @@ describe("dashboard queries", () => {
       expect(payments).toHaveLength(3);
     });
   });
+
+  describe("getRecentClassSessionsBySport", () => {
+    it("returns sessions for a specific sport", async () => {
+      const sessions = await getRecentClassSessionsBySport("sport_bjj");
+      // session_1 is the only BJJ session in seed data
+      expect(sessions).toHaveLength(1);
+      expect(sessions[0].date).toBe("2026-02-23");
+      expect(sessions[0].startTime).toBe("18:00");
+      expect(sessions[0].endTime).toBe("19:30");
+    });
+
+    it("returns correct attendee count", async () => {
+      const sessions = await getRecentClassSessionsBySport("sport_bjj");
+      // 2 present attendees in session_1
+      expect(sessions[0].attendeeCount).toBe(2);
+    });
+
+    it("returns empty array for sport with no sessions", async () => {
+      const sessions = await getRecentClassSessionsBySport("sport_mma");
+      expect(sessions).toHaveLength(0);
+    });
+
+    it("respects the limit parameter", async () => {
+      // Add extra BJJ sessions
+      const { classSessions } = await import("@/db/schema");
+      for (let i = 0; i < 5; i++) {
+        await testDb.insert(classSessions).values({
+          id: `session_limit_${i}`,
+          scheduleId: "sched_1",
+          date: `2026-02-1${i}`,
+        });
+      }
+
+      const limited = await getRecentClassSessionsBySport("sport_bjj", 3);
+      expect(limited).toHaveLength(3);
+
+      const all = await getRecentClassSessionsBySport("sport_bjj");
+      expect(all.length).toBe(6); // 1 original + 5 new
+    });
+
+    it("orders sessions by date descending", async () => {
+      const { classSessions } = await import("@/db/schema");
+      await testDb.insert(classSessions).values({
+        id: "session_older",
+        scheduleId: "sched_1",
+        date: "2026-02-10",
+      });
+
+      const sessions = await getRecentClassSessionsBySport("sport_bjj");
+      expect(sessions).toHaveLength(2);
+      // Most recent first
+      expect(sessions[0].date).toBe("2026-02-23");
+      expect(sessions[1].date).toBe("2026-02-10");
+    });
+
+    it("counts only present attendees, not absent ones", async () => {
+      const { classSessions, attendance } = await import("@/db/schema");
+
+      // Create a new session with mixed attendance
+      await testDb.insert(classSessions).values({
+        id: "session_mixed",
+        scheduleId: "sched_1",
+        date: "2026-02-20",
+      });
+      await testDb.insert(attendance).values([
+        { id: "att_mix_1", memberId: "member_1", classSessionId: "session_mixed", present: true },
+        { id: "att_mix_2", memberId: "member_2", classSessionId: "session_mixed", present: false },
+      ]);
+
+      const sessions = await getRecentClassSessionsBySport("sport_bjj");
+      const mixedSession = sessions.find((s) => s.sessionId === "session_mixed");
+      expect(mixedSession).toBeDefined();
+      expect(mixedSession!.attendeeCount).toBe(1); // Only 1 present
+    });
+
+    it("returns zero attendees for sessions with no attendance records", async () => {
+      const sessions = await getRecentClassSessionsBySport("sport_kb");
+      // No KB sessions in seed data, but let's add one without attendance
+      const { classSessions } = await import("@/db/schema");
+      await testDb.insert(classSessions).values({
+        id: "session_kb_empty",
+        scheduleId: "sched_2",
+        date: "2026-02-24",
+      });
+
+      const kbSessions = await getRecentClassSessionsBySport("sport_kb");
+      expect(kbSessions).toHaveLength(1);
+      expect(kbSessions[0].attendeeCount).toBe(0);
+    });
+  });
+
 });

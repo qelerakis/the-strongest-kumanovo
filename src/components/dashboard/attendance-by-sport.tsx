@@ -70,6 +70,22 @@ export default function AttendanceBySport({
 
   const sessions = sessionsBySport[activeSportId] ?? [];
 
+  const handleTabKeyDown = (e: React.KeyboardEvent, index: number) => {
+    let newIndex = index;
+    if (e.key === "ArrowRight") {
+      newIndex = (index + 1) % sports.length;
+    } else if (e.key === "ArrowLeft") {
+      newIndex = (index - 1 + sports.length) % sports.length;
+    } else {
+      return;
+    }
+    e.preventDefault();
+    setActiveSportId(sports[newIndex].id);
+    // Focus the new tab button
+    const buttons = e.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
+    buttons?.[newIndex]?.focus();
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -80,11 +96,18 @@ export default function AttendanceBySport({
       </CardHeader>
       <CardContent>
         {/* Sport tabs */}
-        <div className="mb-4 flex gap-1 rounded-lg bg-surface-alt p-1">
-          {sports.map((sport) => (
+        <div
+          role="tablist"
+          className="mb-4 flex gap-1 rounded-lg bg-surface-alt p-1"
+        >
+          {sports.map((sport, index) => (
             <button
               key={sport.id}
+              role="tab"
+              aria-selected={activeSportId === sport.id}
+              tabIndex={activeSportId === sport.id ? 0 : -1}
               onClick={() => setActiveSportId(sport.id)}
+              onKeyDown={(e) => handleTabKeyDown(e, index)}
               className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                 activeSportId === sport.id
                   ? "bg-surface text-text-primary shadow-sm"
@@ -97,34 +120,36 @@ export default function AttendanceBySport({
         </div>
 
         {/* Sessions list */}
-        {sessions.length === 0 ? (
-          <div className="flex items-center justify-center rounded-lg border border-dashed border-surface-border py-8">
-            <p className="text-sm text-text-muted">
-              {t("noClassSessions")}
-            </p>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {sessions.map((session) => (
-              <div
-                key={session.sessionId}
-                className="flex items-center justify-between rounded-lg border border-surface-border px-4 py-3"
-              >
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-sm font-medium text-text-primary">
-                    {formatSessionDate(session.date)}
-                  </span>
-                  <span className="text-xs text-text-muted">
-                    {formatTimeSlot(session.startTime, session.endTime)}
+        <div role="tabpanel">
+          {sessions.length === 0 ? (
+            <div className="flex items-center justify-center rounded-lg border border-dashed border-surface-border py-8">
+              <p className="text-sm text-text-muted">
+                {t("noClassSessions")}
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {sessions.map((session) => (
+                <div
+                  key={session.sessionId}
+                  className="flex items-center justify-between rounded-lg border border-surface-border px-4 py-3"
+                >
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-sm font-medium text-text-primary">
+                      {formatSessionDate(session.date)}
+                    </span>
+                    <span className="text-xs text-text-muted">
+                      {formatTimeSlot(session.startTime, session.endTime)}
+                    </span>
+                  </div>
+                  <span className="text-sm font-semibold text-text-secondary">
+                    {t("attendees", { count: session.attendeeCount })}
                   </span>
                 </div>
-                <span className="text-sm font-semibold text-text-secondary">
-                  {t("attendees", { count: session.attendeeCount })}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

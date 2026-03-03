@@ -102,9 +102,7 @@
     "paidFor": "{member} плати {amount} за {month}",
     "attendanceBySport": "Присуство по спорт",
     "noClassSessions": "Нема забележани тренинзи",
-    "attendees": "{count} присутни",
-    "classDate": "Датум",
-    "classTime": "Време"
+    "attendees": "{count} присутни"
   },
   "members": {
     "title": "Членови",

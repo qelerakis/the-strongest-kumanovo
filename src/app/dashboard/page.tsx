@@ -23,14 +23,12 @@ export default async function DashboardPage() {
   const t = await getTranslations("dashboard");
   const currentMonth = getCurrentMonth();
 
-  const [stats, flaggedMembers, recentPayments] = await Promise.all([
+  const [stats, flaggedMembers, recentPayments, sports] = await Promise.all([
     getDashboardStats(),
     getFlaggedMembers(currentMonth),
     getRecentPayments(5),
+    getAllSports(),
   ]);
-
-  // Fetch sports and recent class sessions per sport
-  const sports = await getAllSports();
 
   const sessionsBySportEntries = await Promise.all(
     sports.map(async (sport) => {
