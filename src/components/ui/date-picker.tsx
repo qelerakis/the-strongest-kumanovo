@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 
 interface DatePickerProps {
   label?: string;
@@ -105,6 +106,7 @@ function DatePicker({
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   // Viewing state for calendar navigation
   const today = new Date();
@@ -150,7 +152,11 @@ function DatePicker({
     if (!open) return;
 
     function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        containerRef.current && !containerRef.current.contains(target) &&
+        panelRef.current && !panelRef.current.contains(target)
+      ) {
         setOpen(false);
       }
     }
@@ -284,55 +290,64 @@ function DatePicker({
 
       {error && <p className="text-sm text-error">{error}</p>}
 
-      {/* Dropdown panel */}
-      {open && (
-        <div className="absolute top-full left-0 z-50 mt-1 w-full min-w-[280px] rounded-lg border border-surface-border bg-surface-card p-3 shadow-lg shadow-black/40">
-          {/* Header with navigation */}
-          <div className="mb-2 flex items-center justify-between">
-            <button
-              type="button"
-              onClick={navigatePrev}
-              className="rounded p-1 text-text-secondary hover:bg-surface-hover hover:text-text-primary transition-colors"
-              aria-label="Previous"
-            >
-              <ChevronLeft />
-            </button>
-            <span className="text-sm font-semibold text-text-primary">
-              {mode === "date"
-                ? `${MONTH_LABELS[viewMonth]} ${viewYear}`
-                : String(viewYear)}
-            </span>
-            <button
-              type="button"
-              onClick={navigateNext}
-              className="rounded p-1 text-text-secondary hover:bg-surface-hover hover:text-text-primary transition-colors"
-              aria-label="Next"
-            >
-              <ChevronRight />
-            </button>
-          </div>
+      {/* Dropdown panel - centered overlay portaled to body to escape transform ancestors */}
+      {open && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setOpen(false)}
+          />
+          {/* Calendar panel */}
+          <div ref={panelRef} className="relative w-[300px] rounded-lg border border-surface-border bg-surface-card p-3 shadow-lg shadow-black/40">
+            {/* Header with navigation */}
+            <div className="mb-2 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={navigatePrev}
+                className="rounded p-1 text-text-secondary hover:bg-surface-hover hover:text-text-primary transition-colors"
+                aria-label="Previous"
+              >
+                <ChevronLeft />
+              </button>
+              <span className="text-sm font-semibold text-text-primary">
+                {mode === "date"
+                  ? `${MONTH_LABELS[viewMonth]} ${viewYear}`
+                  : String(viewYear)}
+              </span>
+              <button
+                type="button"
+                onClick={navigateNext}
+                className="rounded p-1 text-text-secondary hover:bg-surface-hover hover:text-text-primary transition-colors"
+                aria-label="Next"
+              >
+                <ChevronRight />
+              </button>
+            </div>
 
-          {mode === "date" ? (
-            <DateGrid
-              viewYear={viewYear}
-              viewMonth={viewMonth}
-              selectedYear={selectedYear}
-              selectedMonth={selectedMonth}
-              selectedDay={selectedDay}
-              todayYear={todayYear}
-              todayMonth={todayMonth}
-              todayDay={todayDay}
-              onSelect={selectDate}
-            />
-          ) : (
-            <MonthGrid
-              viewYear={viewYear}
-              selectedYear={selectedYear}
-              selectedMonth={selectedMonth}
-              onSelect={selectMonth}
-            />
-          )}
-        </div>
+            {mode === "date" ? (
+              <DateGrid
+                viewYear={viewYear}
+                viewMonth={viewMonth}
+                selectedYear={selectedYear}
+                selectedMonth={selectedMonth}
+                selectedDay={selectedDay}
+                todayYear={todayYear}
+                todayMonth={todayMonth}
+                todayDay={todayDay}
+                onSelect={selectDate}
+              />
+            ) : (
+              <MonthGrid
+                viewYear={viewYear}
+                selectedYear={selectedYear}
+                selectedMonth={selectedMonth}
+                onSelect={selectMonth}
+              />
+            )}
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );
