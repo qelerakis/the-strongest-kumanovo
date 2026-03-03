@@ -92,14 +92,17 @@
     "monthlyRevenue": "Месечен приход",
     "flaggedMembers": "Означени членови",
     "flaggedDescription": "Членови со помалку од 3 тренинзи овој месец",
-    "recentActivity": "Последна активност",
+    "recentPayments": "Последни плаќања",
     "sessions": "тренинзи",
     "view": "Прегледај",
     "memberName": "Име на член",
     "sessionsAttended": "Посетени тренинзи",
     "allOnTrack": "Сите членови се на вистинскиот пат овој месец.",
-    "noRecentActivity": "Нема последна активност",
-    "paidFor": "{member} плати {amount} за {month}"
+    "noRecentPayments": "Нема последни плаќања",
+    "paidFor": "{member} плати {amount} за {month}",
+    "attendanceBySport": "Присуство по спорт",
+    "noClassSessions": "Нема забележани тренинзи",
+    "attendees": "{count} присутни"
   },
   "members": {
     "title": "Членови",

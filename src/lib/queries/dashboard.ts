@@ -138,3 +138,41 @@ export async function getRecentPayments(limit: number = 5) {
 
   return results;
 }
+
+/**
+ * Get recent class sessions for a specific sport with attendance counts.
+ * Returns date, time, and number of attendees per session.
+ */
+export async function getRecentClassSessionsBySport(
+  sportId: string,
+  limit: number = 10
+) {
+  const results = await db
+    .select({
+      sessionId: schema.classSessions.id,
+      date: schema.classSessions.date,
+      startTime: schema.schedule.startTime,
+      endTime: schema.schedule.endTime,
+      attendeeCount: sql<number>`count(case when ${schema.attendance.present} = 1 then 1 end)`,
+    })
+    .from(schema.classSessions)
+    .innerJoin(
+      schema.schedule,
+      eq(schema.classSessions.scheduleId, schema.schedule.id)
+    )
+    .leftJoin(
+      schema.attendance,
+      eq(schema.attendance.classSessionId, schema.classSessions.id)
+    )
+    .where(eq(schema.schedule.sportId, sportId))
+    .groupBy(
+      schema.classSessions.id,
+      schema.classSessions.date,
+      schema.schedule.startTime,
+      schema.schedule.endTime
+    )
+    .orderBy(desc(schema.classSessions.date), desc(schema.schedule.startTime))
+    .limit(limit);
+
+  return results;
+}

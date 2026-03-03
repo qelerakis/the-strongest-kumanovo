@@ -92,14 +92,17 @@
     "monthlyRevenue": "Monthly Revenue",
     "flaggedMembers": "Flagged Members",
     "flaggedDescription": "Members with less than 3 sessions this month",
-    "recentActivity": "Recent Activity",
+    "recentPayments": "Recent Payments",
     "sessions": "sessions",
     "view": "View",
     "memberName": "Member Name",
     "sessionsAttended": "Sessions Attended",
     "allOnTrack": "All members are on track this month.",
-    "noRecentActivity": "No recent activity",
-    "paidFor": "{member} paid {amount} for {month}"
+    "noRecentPayments": "No recent payments",
+    "paidFor": "{member} paid {amount} for {month}",
+    "attendanceBySport": "Attendance by Sport",
+    "noClassSessions": "No class sessions recorded",
+    "attendees": "{count} attendees"
   },
   "members": {
     "title": "Members",
