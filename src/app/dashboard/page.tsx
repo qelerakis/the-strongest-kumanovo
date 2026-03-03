@@ -5,13 +5,16 @@ import {
   getDashboardStats,
   getFlaggedMembers,
   getRecentPayments,
+  getRecentClassSessionsBySport,
 } from "@/lib/queries/dashboard";
+import { getAllSports } from "@/lib/queries/settings";
 import { getCurrentMonth } from "@/lib/utils";
 import PageTransition from "@/components/motion/page-transition";
 import FadeIn from "@/components/motion/fade-in";
 import StatsCards from "@/components/dashboard/stats-cards";
 import FlaggedMembers from "@/components/dashboard/flagged-members";
 import RecentActivity from "@/components/dashboard/recent-activity";
+import AttendanceBySport from "@/components/dashboard/attendance-by-sport";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -25,6 +28,27 @@ export default async function DashboardPage() {
     getFlaggedMembers(currentMonth),
     getRecentPayments(5),
   ]);
+
+  // Fetch sports and recent class sessions per sport
+  const sports = await getAllSports();
+
+  const sessionsBySportEntries = await Promise.all(
+    sports.map(async (sport) => {
+      const sessions = await getRecentClassSessionsBySport(sport.id, 10);
+      return [sport.id, sessions] as const;
+    })
+  );
+  const sessionsBySport = Object.fromEntries(sessionsBySportEntries);
+
+  // Determine default sport based on admin username
+  const defaultSportId = (() => {
+    const username = session.user.username.toLowerCase();
+    if (username === "filip") {
+      return sports.find((s) => s.nameKey === "kickboxing")?.id ?? sports[0]?.id ?? "";
+    }
+    // Martin and other admins default to BJJ
+    return sports.find((s) => s.nameKey === "bjj")?.id ?? sports[0]?.id ?? "";
+  })();
 
   return (
     <PageTransition>
@@ -53,6 +77,15 @@ export default async function DashboardPage() {
             <RecentActivity recentPayments={recentPayments} />
           </FadeIn>
         </div>
+
+        {/* Attendance by sport */}
+        <FadeIn delay={0.3}>
+          <AttendanceBySport
+            sports={sports}
+            sessionsBySport={sessionsBySport}
+            defaultSportId={defaultSportId}
+          />
+        </FadeIn>
       </div>
     </PageTransition>
   );
