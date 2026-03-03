@@ -99,7 +99,12 @@
     "sessionsAttended": "Sessions Attended",
     "allOnTrack": "All members are on track this month.",
     "noRecentPayments": "No recent payments",
-    "paidFor": "{member} paid {amount} for {month}"
+    "paidFor": "{member} paid {amount} for {month}",
+    "attendanceBySport": "Attendance by Sport",
+    "noClassSessions": "No class sessions recorded",
+    "attendees": "{count} attendees",
+    "classDate": "Date",
+    "classTime": "Time"
   },
   "members": {
     "title": "Members",
