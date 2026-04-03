@@ -4,8 +4,8 @@
 
 | Field          | Value                                         |
 | -------------- | --------------------------------------------- |
-| Version        | 0.1.0                                         |
-| Last Updated   | 2026-02-25                                    |
+| Version        | 0.2.0                                         |
+| Last Updated   | 2026-04-02                                    |
 | Status         | In Development                                |
 | Owner          | Gym Owner / Admin                             |
 | Stack          | Next.js 16, TypeScript, Turso, Drizzle ORM    |
@@ -157,7 +157,7 @@ A single-gym web application that gives the owner a centralized dashboard to man
 **Member CRUD**
 - Admin can create, read, update, and deactivate members.
 - Required fields: `fullName`, `membershipTierId`, `joinDate`.
-- Optional fields: `phone`, `email`, `dateOfBirth`, `emergencyContact`, `notes`.
+- Optional fields: `phone`, `email`, `dateOfBirth`, `notes`.
 - Email validated as proper format when provided.
 
 **Sport Enrollment**
@@ -165,7 +165,7 @@ A single-gym web application that gives the owner a centralized dashboard to man
 - Enrollment is validated against the member's tier:
   - **Basic** (sportsAllowed = 1): Maximum 1 sport.
   - **Standard** (sportsAllowed = 2): Maximum 2 sports.
-  - **Premium** (sportsAllowed = -1): Unlimited sports (all 4).
+  - **Premium** (sportsAllowed = -1): Unlimited sports (all 3).
 
 **Belt Rank Tracking**
 - Belt rank field with enum values: `white`, `blue`, `purple`, `brown`, `black`.
@@ -212,18 +212,32 @@ A single-gym web application that gives the owner a centralized dashboard to man
 
 **Cash Payment Logging**
 - Admin logs cash payments with the following fields:
-  - `memberId` (required): Which member paid.
+  - `memberId` (required): Which member paid. Selected via searchable combobox.
   - `amountMkd` (required): Amount in Macedonian Denars (MKD), positive integer.
   - `paymentDate` (required): Date the payment was received.
   - `monthFor` (required): The month the payment covers, in `YYYY-MM` format.
+  - `numberOfMonths` (optional, 1-6): For advance multi-month payments. Splits amount across consecutive months.
   - `notes` (optional): Free text.
 
-**Balance Computation**
-- Credit Balance = SUM(all payments) - (months_active * tier monthly price in MKD).
+**Multi-Month Advance Payments**
+- When `numberOfMonths > 1`, the payment is split into N records.
+- First N-1 months get the tier's monthly price. The last month gets the remainder.
+- Auto-generated notes: "Advance payment X/N" with optional custom notes appended.
+- Year boundary handling: November + 3 months correctly creates Nov, Dec, Jan records.
+
+**Balance Computation (Cumulative)**
+- Credit Balance = SUM(all payments where monthFor <= selected month) - (months from joinDate to selected month * tier monthly price).
+- Overpay credits carry forward automatically: if a member overpays in March, the credit reduces April's debt.
 - Displayed as:
   - **Credit** (positive balance): Member has paid ahead.
   - **Owes / Debt** (negative balance): Member has outstanding dues.
   - **Settled** (zero balance): Member is current.
+
+**Month Navigation**
+- Admin payments page supports browsing any month via `?month=YYYY-MM` URL parameter.
+- Arrow navigation between months, "Today" button to return to current month.
+- Member search filter on the summary table.
+- Month parameter validated with regex; invalid values fall back to current month.
 
 **Payment History**
 - Full list of all payments for a member, showing date, amount, month covered, and notes.
@@ -355,16 +369,17 @@ A public-facing page at the root URL (`/`).
 
 ## 6. Business Rules
 
-### BR-1: Credit Balance Calculation
+### BR-1: Credit Balance Calculation (Cumulative)
 
 ```
-Credit Balance = SUM(payments.amountMkd) - (months_active * membershipTier.monthlyPriceMkd)
+Credit Balance = SUM(payments.amountMkd WHERE monthFor <= selectedMonth) - (months_from_joinDate_to_selectedMonth * membershipTier.monthlyPriceMkd)
 ```
 
-- **Positive balance** = Credit (member has paid ahead).
+- **Positive balance** = Credit (member has paid ahead). Credits carry forward to future months.
 - **Negative balance** = Debt (member owes money).
 - **Zero balance** = Settled.
-- `months_active` is calculated from the member's `joinDate` to the current date.
+- Months owed is calculated from the member's `joinDate` through the selected viewing month (inclusive).
+- The admin can view any month's cumulative balance via the payments page month navigation.
 
 ### BR-2: Low Attendance Flag (<3 Sessions Rule)
 
@@ -509,7 +524,6 @@ The application uses 9 tables in a SQLite database (Turso). All primary keys are
 | phone              | text      | Optional                                 |
 | email              | text      | Optional, validated format               |
 | date_of_birth      | text      | Optional                                 |
-| emergency_contact  | text      | Optional                                 |
 | membership_tier_id | text (FK) | References `membership_tiers.id`         |
 | belt_rank          | text      | Enum: white/blue/purple/brown/black      |
 | join_date          | text      | Required                                 |
@@ -561,7 +575,7 @@ The application uses 9 tables in a SQLite database (Turso). All primary keys are
 | Column      | Type      | Notes                                           |
 | ----------- | --------- | ----------------------------------------------- |
 | id          | text (PK) | CUID2                                           |
-| schedule_id | text (FK) | References `schedule.id`                        |
+| schedule_id | text (FK) | References `schedule.id`, cascade delete        |
 | date        | text      | Date string                                     |
 | notes       | text      | Optional                                        |
 | created_at  | integer   | Timestamp                                       |

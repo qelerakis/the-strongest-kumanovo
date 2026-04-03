@@ -4,11 +4,21 @@ import { getCurrentMonth } from "@/lib/utils";
 import PageTransition from "@/components/motion/page-transition";
 import PaymentsOverview from "@/components/payments/payments-overview";
 
-export default async function PaymentsPage() {
+interface PaymentsPageProps {
+  searchParams: Promise<{ month?: string }>;
+}
+
+export default async function PaymentsPage({ searchParams }: PaymentsPageProps) {
+  const params = await searchParams;
   const currentMonth = getCurrentMonth();
+  const monthParam = params.month;
+  const selectedMonth =
+    monthParam && /^\d{4}-(0[1-9]|1[0-2])$/.test(monthParam)
+      ? monthParam
+      : currentMonth;
 
   const [summary, allMembers] = await Promise.all([
-    getPaymentsSummary(currentMonth),
+    getPaymentsSummary(selectedMonth),
     getAllMembers({ isActive: true }),
   ]);
 
@@ -26,6 +36,7 @@ export default async function PaymentsPage() {
           summary={summary}
           members={memberOptions}
           currentMonth={currentMonth}
+          selectedMonth={selectedMonth}
         />
       </div>
     </PageTransition>

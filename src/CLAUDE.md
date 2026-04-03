@@ -85,7 +85,7 @@ Organized by domain. Each directory maps to a feature area:
 | Table | Key Columns | Notes |
 |-------|-------------|-------|
 | `users` | username, passwordHash, role (admin/member), memberId? | Auth accounts. Admin has no memberId. |
-| `members` | fullName, phone?, email?, dateOfBirth?, emergencyContact?, membershipTierId, beltRank?, joinDate, isActive, notes? | Core member profiles. |
+| `members` | fullName, phone?, email?, dateOfBirth?, membershipTierId, beltRank?, joinDate, isActive, notes? | Core member profiles. |
 | `sports` | name, nameKey, color? | 3 sports: BJJ, Kickboxing, MMA. |
 | `membership_tiers` | name, nameKey, sportsAllowed, monthlyPriceMkd, isActive | Basic/Standard/Premium. sportsAllowed=-1 means unlimited. |
 | `member_sports` | memberId, sportId | Junction table. Unique(memberId, sportId). |
@@ -109,18 +109,18 @@ Run with `npm run db:seed`. Seeds:
 ### actions/ - Server Actions (Mutations)
 All server actions use `"use server"` directive. Pattern: validate input with Zod, check auth session, perform DB operation, call `revalidatePath()`.
 - `members.ts` - createMember, updateMember, toggleMemberStatus, createMemberCredentials
-- `attendance.ts` - saveAttendance (upserts attendance records for a class session)
-- `payments.ts` - createPayment
+- `attendance.ts` - openClassSession, markAttendance, getSessionsForDateAction, getSessionDetailsAction (all auth-protected)
+- `payments.ts` - logPayment (single + multi-month advance), deletePayment
 - `schedule.ts` - createScheduleSlot, updateScheduleSlot, deleteScheduleSlot
 - `auth.ts` - login (calls signIn), logout (calls signOut)
 - `settings.ts` - updateTierPricing
-- `locale.ts` - setLocale (sets cookie)
+- `locale.ts` - setLocale (sets cookie, validates against ["en", "mk"] whitelist)
 
 ### queries/ - Data Fetching (Reads)
 Pure read functions for Server Components. No mutations. Pattern: query DB with Drizzle, return typed data.
-- `members.ts` - getMember, getMembers, getMemberWithSports
-- `attendance.ts` - getAttendanceForSession, getMemberAttendance, getMonthlyAttendanceCount
-- `payments.ts` - getMemberPayments, getMemberBalance, getAllMemberBalances
+- `members.ts` - getAllMembers, getMemberById, getMemberBalance
+- `attendance.ts` - getClassSessionsForDate, getAttendanceForSession, getMemberAttendanceHistory
+- `payments.ts` - getPaymentsForMember, getPaymentsSummary (cumulative balance)
 - `schedule.ts` - getSchedule, getTodaySchedule, getScheduleForDay
 - `dashboard.ts` - getDashboardStats, getFlaggedMembers, getRecentActivity
 - `settings.ts` - getTiers, getTier
@@ -130,6 +130,7 @@ Pure read functions for Server Components. No mutations. Pattern: query DB with 
 - `formatDate(date)` - ISO date to "25 Feb 2026"
 - `formatTime(time)` - "18:30" to "6:30 PM"
 - `getCurrentMonth()` - Returns "YYYY-MM" for current month
+- `incrementMonth(yearMonth, offset)` - Increment "YYYY-MM" by N months
 - `cn(...classes)` - Merge CSS class names, filtering falsy values
 - `getMonthsBetween(start, end)` - Array of "YYYY-MM" strings between two dates
 

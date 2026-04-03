@@ -280,7 +280,7 @@ The `db` instance is a module-level singleton. In development, `TURSO_DATABASE_U
 | password_hash    |------>| phone             |  FK   | name_key         |
 | role (enum)      |       | email             |------>| sports_allowed   |
 | member_id (FK?)  |       | date_of_birth     |       | monthly_price_mkd|
-| created_at       |       | emergency_contact |       | is_active        |
+| created_at       |       |                   |       | is_active        |
 +------------------+       | membership_tier_id|       | updated_at       |
                            | belt_rank (enum)  |       +------------------+
                            | join_date         |

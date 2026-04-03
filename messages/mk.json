@@ -160,7 +160,14 @@
     "numberOfMonths": "Број на месеци",
     "startingMonth": "Почетен месец",
     "expectedAmount": "Очекувано: {amount} ({price} x {months})",
-    "advancePayment": "Авансно плаќање {current}/{total}"
+    "advancePayment": "Авансно плаќање {current}/{total}",
+    "previousMonth": "Претходен месец",
+    "nextMonth": "Следен месец",
+    "cumulativeBalance": "Кумулативно салдо",
+    "monthlyOwed": "Месечно должи",
+    "selectMember": "Одберете член",
+    "today": "Денес",
+    "tier": "Пакет"
   },
   "schedule": {
     "title": "Распоред",

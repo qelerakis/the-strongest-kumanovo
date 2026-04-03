@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useCallback } from "react";
+import { useState, useTransition, useCallback, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import {
   Dialog,
@@ -52,7 +52,9 @@ function PaymentFormInner({
   const [paymentDate, setPaymentDate] = useState(today);
   const [monthFor, setMonthFor] = useState(currentMonth);
   const [notes, setNotes] = useState("");
-  const [memberSearch, setMemberSearch] = useState("");
+  const [memberSearch, setMemberSearch] = useState(
+    defaultMember ? defaultMember.fullName : ""
+  );
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -81,6 +83,11 @@ function PaymentFormInner({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!memberId) {
+      setError(t("selectMember"));
+      return;
+    }
 
     const formData = new FormData();
     formData.set("memberId", memberId);
@@ -111,6 +118,26 @@ function PaymentFormInner({
       )
     : members;
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSelectMember = (member: MemberOption) => {
+    handleMemberChange(member.id);
+    setMemberSearch(member.fullName);
+    setIsDropdownOpen(false);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <DialogHeader>
@@ -118,32 +145,73 @@ function PaymentFormInner({
       </DialogHeader>
 
       <DialogContent className="flex flex-col gap-4">
-        {/* Member select with search */}
-        <div className="flex flex-col gap-1.5">
+        {/* Member searchable combobox */}
+        <div className="flex flex-col gap-1.5" ref={dropdownRef}>
           <label className="text-sm font-medium text-text-secondary">
             {t("member")}
           </label>
-          <input
-            type="text"
-            placeholder={tCommon("search")}
-            value={memberSearch}
-            onChange={(e) => setMemberSearch(e.target.value)}
-            className="w-full rounded-lg border border-surface-border bg-surface-card px-3 py-2 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-1 focus:ring-offset-surface"
-          />
-          <Select
-            value={memberId}
-            onChange={(e) => handleMemberChange(e.target.value)}
-            required
-          >
-            <option value="" disabled>
-              {t("member")}
-            </option>
-            {filteredMembers.map((member) => (
-              <option key={member.id} value={member.id}>
-                {member.fullName}
-              </option>
-            ))}
-          </Select>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder={tCommon("search")}
+              value={memberSearch}
+              onChange={(e) => {
+                setMemberSearch(e.target.value);
+                setIsDropdownOpen(true);
+                // Clear selection if user edits after selecting
+                if (selectedMember && e.target.value !== selectedMember.fullName) {
+                  setMemberId("");
+                }
+              }}
+              onFocus={() => setIsDropdownOpen(true)}
+              className="w-full rounded-lg border border-surface-border bg-surface-card px-3 py-2 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-1 focus:ring-offset-surface"
+              autoComplete="off"
+            />
+            {selectedMember && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMemberId("");
+                  setMemberSearch("");
+                  setIsDropdownOpen(true);
+                }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary text-sm"
+                aria-label="Clear selection"
+              >
+                ×
+              </button>
+            )}
+            {isDropdownOpen && filteredMembers.length > 0 && (
+              <ul className="absolute z-50 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-surface-border bg-surface-card shadow-lg">
+                {filteredMembers.map((member) => (
+                  <li key={member.id}>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectMember(member)}
+                      className={`w-full px-3 py-2 text-left text-sm transition-colors hover:bg-surface-hover ${
+                        member.id === memberId
+                          ? "bg-surface-hover text-text-primary font-medium"
+                          : "text-text-secondary"
+                      }`}
+                    >
+                      {member.fullName}
+                      <span className="ml-2 text-xs text-text-muted">
+                        {formatMKD(member.tierPrice)}/mo
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {isDropdownOpen && memberSearch && filteredMembers.length === 0 && (
+              <div className="absolute z-50 mt-1 w-full rounded-lg border border-surface-border bg-surface-card px-3 py-2 text-sm text-text-muted shadow-lg">
+                {tCommon("noResults")}
+              </div>
+            )}
+          </div>
+          {!memberId && memberSearch && !isDropdownOpen && (
+            <p className="text-xs text-error">{t("member")}</p>
+          )}
         </div>
 
         {/* Number of months */}

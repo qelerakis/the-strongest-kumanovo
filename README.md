@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# The Strongest Kumanovo
 
-## Getting Started
+Martial arts gym management web app for **The Strongest Kumanovo** in Kumanovo, North Macedonia. Manages members, attendance tracking, and cash payment logging across BJJ, Kickboxing, and MMA. Bilingual (English / Macedonian).
 
-First, run the development server:
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router) + TypeScript
+- **Database**: Turso (hosted SQLite) + Drizzle ORM
+- **Auth**: NextAuth v5 (JWT strategy)
+- **Styling**: Tailwind CSS 4 + Framer Motion
+- **i18n**: next-intl (EN/MK)
+- **Validation**: Zod
+- **Testing**: Vitest (440+ tests)
+- **Hosting**: Vercel
+
+## Quick Start
 
 ```bash
+# Install dependencies
+npm install
+
+# Set up environment (copy and edit)
+cp .env.example .env.local
+# TURSO_DATABASE_URL=file:local.db
+# TURSO_AUTH_TOKEN=
+# AUTH_SECRET=your-secret-here-min-32-chars
+# AUTH_URL=http://localhost:3000
+
+# Push schema to local database
+npm run db:push
+
+# Seed default data (sports, tiers, admin user, schedule)
+npm run db:seed
+
+# Start dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Default admin login**: `admin` / `admin123`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server |
+| `npm run build` | Production build |
+| `npm run test` | Run all tests |
+| `npm run test:watch` | Tests in watch mode |
+| `npm run lint` | ESLint |
+| `npm run db:push` | Push schema to database |
+| `npm run db:seed` | Seed default data |
+| `npm run db:studio` | Open Drizzle Studio |
 
-## Learn More
+## Documentation
 
-To learn more about Next.js, take a look at the following resources:
+| Document | Description |
+|----------|-------------|
+| [CLAUDE.md](CLAUDE.md) | Quick reference: structure, patterns, commands |
+| [docs/PRD.md](docs/PRD.md) | Product requirements document |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Architecture deep-dive |
+| [docs/DEVELOPMENT-STATUS.md](docs/DEVELOPMENT-STATUS.md) | Current development status |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Admin Dashboard**: Stats, flagged members, recent activity, attendance by sport
+- **Member Management**: CRUD, sport enrollment, belt rank tracking, credential creation
+- **Attendance Tracking**: Per-class checklist, calendar heatmap, past date editing
+- **Payment Management**: Cash logging, multi-month advance payments, cumulative balance with credit carry-forward, month navigation
+- **Schedule Management**: Weekly class slots CRUD, public schedule display
+- **Member Portal**: Read-only dashboard with personal stats, attendance, payments
+- **Landing Page**: Public-facing with sports showcase, schedule, contact info

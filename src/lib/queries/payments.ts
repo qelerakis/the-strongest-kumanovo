@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import * as schema from "@/db/schema";
-import { eq, desc, sum } from "drizzle-orm";
+import { eq, desc, sum, lte } from "drizzle-orm";
+import { getMonthsBetween } from "@/lib/utils";
 
 /**
  * Get all payments for a specific member, ordered by payment date descending.
@@ -23,16 +24,21 @@ export async function getPaymentsForMember(memberId: string) {
 
 /**
  * Get a payment summary for all members for a given month (YYYY-MM).
- * Returns each member's name, tier price, total paid that month, and balance.
+ * Returns each member's name, tier price, total paid that month, and
+ * cumulative balance from join date through the selected month.
+ *
+ * Cumulative balance = totalPaid(all months up to selected) - totalOwed(join to selected).
+ * This correctly carries forward overpay credits and prior debts.
  */
 export async function getPaymentsSummary(month: string) {
-  // Get all active members with their tier price
+  // Get all active members with their tier price and join date
   const members = await db
     .select({
       id: schema.members.id,
       fullName: schema.members.fullName,
       tierName: schema.membershipTiers.name,
       tierPrice: schema.membershipTiers.monthlyPriceMkd,
+      joinDate: schema.members.joinDate,
     })
     .from(schema.members)
     .innerJoin(
@@ -42,7 +48,7 @@ export async function getPaymentsSummary(month: string) {
     .where(eq(schema.members.isActive, true))
     .orderBy(schema.members.fullName);
 
-  // Get sum of payments per member for the given month
+  // Get sum of payments per member for the selected month only
   const paymentsForMonth = await db
     .select({
       memberId: schema.payments.memberId,
@@ -52,24 +58,44 @@ export async function getPaymentsSummary(month: string) {
     .where(eq(schema.payments.monthFor, month))
     .groupBy(schema.payments.memberId);
 
-  // Build a lookup map of memberId -> totalPaid
-  const paidMap = new Map<string, number>();
+  const paidThisMonthMap = new Map<string, number>();
   for (const p of paymentsForMonth) {
-    paidMap.set(p.memberId, Number(p.totalPaid ?? 0));
+    paidThisMonthMap.set(p.memberId, Number(p.totalPaid ?? 0));
   }
 
-  // Combine into summary
+  // Get cumulative sum of payments per member up to and including the selected month
+  const cumulativePayments = await db
+    .select({
+      memberId: schema.payments.memberId,
+      totalPaid: sum(schema.payments.amountMkd),
+    })
+    .from(schema.payments)
+    .where(lte(schema.payments.monthFor, month))
+    .groupBy(schema.payments.memberId);
+
+  const cumulativePaidMap = new Map<string, number>();
+  for (const p of cumulativePayments) {
+    cumulativePaidMap.set(p.memberId, Number(p.totalPaid ?? 0));
+  }
+
+  // Combine into summary with cumulative balance
   return members.map((member) => {
-    const totalPaid = paidMap.get(member.id) ?? 0;
-    const balance = totalPaid - member.tierPrice;
+    const totalPaidThisMonth = paidThisMonthMap.get(member.id) ?? 0;
+    const cumulativeTotalPaid = cumulativePaidMap.get(member.id) ?? 0;
+
+    // Calculate months owed from join date through the selected month.
+    // A member who joins mid-month (e.g., Oct 15) owes for the full join month.
+    const monthsOwed = getMonthsBetween(member.joinDate, month + "-01");
+    const cumulativeTotalOwed = monthsOwed.length * member.tierPrice;
+    const cumulativeBalance = cumulativeTotalPaid - cumulativeTotalOwed;
 
     return {
       memberId: member.id,
       fullName: member.fullName,
       tierName: member.tierName,
       tierPrice: member.tierPrice,
-      totalPaid,
-      balance,
+      totalPaid: totalPaidThisMonth,
+      balance: cumulativeBalance,
     };
   });
 }

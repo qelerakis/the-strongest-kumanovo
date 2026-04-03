@@ -128,7 +128,7 @@ export const classSessions = sqliteTable(
       .$defaultFn(() => createId()),
     scheduleId: text("schedule_id")
       .notNull()
-      .references(() => schedule.id),
+      .references(() => schedule.id, { onDelete: "cascade" }),
     date: text("date").notNull(),
     notes: text("notes"),
     createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(

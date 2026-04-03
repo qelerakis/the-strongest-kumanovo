@@ -21,7 +21,7 @@ export const paymentSchema = z.object({
   paymentDate: z.string().min(1, "Payment date is required"),
   monthFor: z
     .string()
-    .regex(/^\d{4}-\d{2}$/, "Must be in YYYY-MM format"),
+    .regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Must be in YYYY-MM format"),
   numberOfMonths: z.number().int().min(1).max(6).default(1),
   notes: z.string().optional(),
 });

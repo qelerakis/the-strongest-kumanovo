@@ -160,7 +160,14 @@
     "numberOfMonths": "Number of Months",
     "startingMonth": "Starting Month",
     "expectedAmount": "Expected: {amount} ({price} x {months})",
-    "advancePayment": "Advance payment {current}/{total}"
+    "advancePayment": "Advance payment {current}/{total}",
+    "previousMonth": "Previous Month",
+    "nextMonth": "Next Month",
+    "cumulativeBalance": "Cumulative Balance",
+    "monthlyOwed": "Monthly Owed",
+    "selectMember": "Select a member",
+    "today": "Today",
+    "tier": "Tier"
   },
   "schedule": {
     "title": "Schedule",

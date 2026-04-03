@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/auth";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -15,6 +16,11 @@ import { getAllMembers } from "@/lib/queries/members";
  * Returns the session ID.
  */
 export async function openClassSession(scheduleId: string, date: string) {
+  const session = await auth();
+  if (!session || session.user.role !== "admin") {
+    return { success: false, error: "Unauthorized" };
+  }
+
   try {
     // Try to insert; if it already exists (unique constraint), do nothing
     await db
@@ -54,6 +60,11 @@ export async function markAttendance(
   presentMemberIds: string[],
   allMemberIds: string[]
 ) {
+  const session = await auth();
+  if (!session || session.user.role !== "admin") {
+    return { success: false, error: "Unauthorized" };
+  }
+
   try {
     const presentSet = new Set(presentMemberIds);
 
@@ -85,6 +96,11 @@ export async function markAttendance(
  * Get class sessions for a specific date (server action wrapper).
  */
 export async function getSessionsForDateAction(date: string) {
+  const session = await auth();
+  if (!session) {
+    return { success: false, sessions: [], error: "Unauthorized" };
+  }
+
   try {
     const sessions = await getClassSessionsForDate(date);
     return { success: true, sessions };
@@ -101,6 +117,11 @@ export async function getSessionDetailsAction(
   sessionId: string,
   sportId: string
 ) {
+  const session = await auth();
+  if (!session) {
+    return { success: false, members: [], existingAttendance: [], error: "Unauthorized" };
+  }
+
   try {
     // Get all active members enrolled in this sport
     const allMembers = await getAllMembers({
